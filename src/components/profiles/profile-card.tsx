@@ -28,10 +28,10 @@ export default function ProfileCard({ profile, subcategory }: { profile: Profile
         <div className="flex items-start justify-between gap-3">
           <h3 className="line-clamp-1 text-base font-semibold text-foreground">{name}</h3>
           {typeof profile.rating === "number" && (
-            <span className="text-xs text-brand">{profile.rating.toFixed(1)}</span>
+            <span className="text-xs text-black">{profile.rating.toFixed(1)}</span>
           )}
         </div>
-        {subcategory && <div className="text-sm text-brand">{subcategory}</div>}
+        {subcategory && <div className="text-sm text-black">{subcategory}</div>}
         {location && <div className="text-xs text-muted-foreground">{location}</div>}
       </div>
     </article>

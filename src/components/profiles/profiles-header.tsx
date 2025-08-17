@@ -40,7 +40,7 @@ export default function ProfilesHeader({ category }: { category: CategoryKey }) 
           value={q}
           onChange={(e) => setQ(e.target.value)}
           placeholder="Buscar profesionales por nombre, oficio o especialidad..."
-          className="h-10 w-full flex-1 rounded-lg border border-brand/20 bg-white px-3 text-sm focus:outline-none focus:ring-2 focus:ring-brand/40"
+          className="h-10 w-full flex-1 rounded-lg border border-black bg-white px-3 text-sm focus:outline-none focus:ring-2 focus:ring-black/40"
         />
         <button
           type="button"
@@ -55,7 +55,7 @@ export default function ProfilesHeader({ category }: { category: CategoryKey }) 
           <button
             onClick={() => updateSearch({ subcat: "" })}
             className={`whitespace-nowrap rounded-full border px-3 py-1 text-xs ${
-              currentSub ? "border-brand/20 text-brand" : "border-brand bg-brand text-brand-foreground"
+              currentSub ? "border-brand/20 text-black" : "border-brand bg-brand text-brand-foreground"
             }`}
             disabled={isPending}
           >
@@ -68,7 +68,7 @@ export default function ProfilesHeader({ category }: { category: CategoryKey }) 
               className={`whitespace-nowrap rounded-full border px-3 py-1 text-xs ${
                 currentSub === o.key
                   ? "border-brand bg-brand text-brand-foreground"
-                  : "border-brand/20 text-brand"
+                  : "border-brand/20 text-black"
               }`}
               disabled={isPending}
             >
