@@ -1,5 +1,5 @@
 import ProfilesList from "@/components/profiles/profiles-list";
-import ProfilesFilters from "@/components/profiles/profiles-filters";
+import ProfilesHeader from "@/components/profiles/profiles-header";
 import { Suspense } from "react";
 import ProfilesSkeleton from "@/components/profiles/profiles-skeleton";
 
@@ -10,7 +10,7 @@ export default function CreadoresPage({ searchParams }: { searchParams?: Record<
         <h1 className="text-2xl font-semibold text-black/90">Creadores</h1>
         <p className="mt-1 text-sm text-black/60">Talento creativo para impulsar tu marca.</p>
         <div className="mt-6">
-          <ProfilesFilters category="creators" />
+          <ProfilesHeader category="creators" />
         </div>
         <div className="mt-6">
           <Suspense fallback={<ProfilesSkeleton />}>
