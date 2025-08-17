@@ -7,8 +7,8 @@ export default function ProveedoresPage({ searchParams }: { searchParams?: Recor
   return (
     <main className="min-h-[calc(100vh-80px)] bg-white">
       <section className="mx-auto max-w-6xl px-6 py-8">
-        <h1 className="text-2xl font-semibold text-black/90">Proveedores</h1>
-        <p className="mt-1 text-sm text-black/60">Productos y servicios para tu negocio.</p>
+        <h1 className="text-2xl font-semibold text-brand">Proveedores</h1>
+        <p className="mt-1 text-sm text-brand/80">Productos y servicios para tu negocio.</p>
         <div className="mt-6">
           <ProfilesHeader category="providers" />
         </div>

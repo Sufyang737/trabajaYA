@@ -7,8 +7,8 @@ export default function CreadoresPage({ searchParams }: { searchParams?: Record<
   return (
     <main className="min-h-[calc(100vh-80px)] bg-white">
       <section className="mx-auto max-w-6xl px-6 py-8">
-        <h1 className="text-2xl font-semibold text-black/90">Creadores</h1>
-        <p className="mt-1 text-sm text-black/60">Talento creativo para impulsar tu marca.</p>
+        <h1 className="text-2xl font-semibold text-brand">Creadores</h1>
+        <p className="mt-1 text-sm text-brand/80">Talento creativo para impulsar tu marca.</p>
         <div className="mt-6">
           <ProfilesHeader category="creators" />
         </div>

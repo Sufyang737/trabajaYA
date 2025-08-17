@@ -11,6 +11,7 @@ export default function ProfilesHeader({ category }: { category: CategoryKey }) 
   const [isPending, startTransition] = useTransition();
 
   const [q, setQ] = useState(params.get("q") || "");
+  const [showFilters, setShowFilters] = useState(false);
   const currentSub = params.get("subcat") || "";
   const options = SUBCATEGORY_OPTIONS[category];
 
@@ -34,39 +35,48 @@ export default function ProfilesHeader({ category }: { category: CategoryKey }) 
 
   return (
     <div>
-      <form onSubmit={onSubmit}>
+      <form onSubmit={onSubmit} className="flex gap-2">
         <input
           value={q}
           onChange={(e) => setQ(e.target.value)}
           placeholder="Buscar profesionales por nombre, oficio o especialidad..."
-          className="h-10 w-full rounded-lg border border-black/10 bg-white px-3 text-sm focus:outline-none focus:ring-2 focus:ring-black/20"
+          className="h-10 w-full flex-1 rounded-lg border border-brand/20 bg-white px-3 text-sm focus:outline-none focus:ring-2 focus:ring-brand/40"
         />
-      </form>
-      <div className="mt-4 flex gap-2 overflow-x-auto">
         <button
-          onClick={() => updateSearch({ subcat: "" })}
-          className={`whitespace-nowrap rounded-full border px-3 py-1 text-xs ${
-            currentSub ? "border-black/10 text-black/60" : "border-black bg-black text-white"
-          }`}
-          disabled={isPending}
+          type="button"
+          onClick={() => setShowFilters((v) => !v)}
+          className="h-10 rounded-lg border border-brand bg-brand px-3 text-sm font-medium text-brand-foreground"
         >
-          Todos
+          Filtros
         </button>
-        {options.map((o) => (
+      </form>
+      {showFilters && (
+        <div className="mt-4 flex gap-2 overflow-x-auto">
           <button
-            key={o.key}
-            onClick={() => updateSearch({ subcat: o.key })}
+            onClick={() => updateSearch({ subcat: "" })}
             className={`whitespace-nowrap rounded-full border px-3 py-1 text-xs ${
-              currentSub === o.key
-                ? "border-black bg-black text-white"
-                : "border-black/10 text-black/60"
+              currentSub ? "border-brand/20 text-brand" : "border-brand bg-brand text-brand-foreground"
             }`}
             disabled={isPending}
           >
-            {o.label}
+            Todos
           </button>
-        ))}
-      </div>
+          {options.map((o) => (
+            <button
+              key={o.key}
+              onClick={() => updateSearch({ subcat: o.key })}
+              className={`whitespace-nowrap rounded-full border px-3 py-1 text-xs ${
+                currentSub === o.key
+                  ? "border-brand bg-brand text-brand-foreground"
+                  : "border-brand/20 text-brand"
+              }`}
+              disabled={isPending}
+            >
+              {o.label}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

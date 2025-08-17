@@ -7,8 +7,8 @@ export default function OficiosPage({ searchParams }: { searchParams?: Record<st
   return (
     <main className="min-h-[calc(100vh-80px)] bg-white">
       <section className="mx-auto max-w-6xl px-6 py-8">
-        <h1 className="text-2xl font-semibold text-black/90">Profesionales de Oficios</h1>
-        <p className="mt-1 text-sm text-black/60">Profesionales verificados para tus necesidades.</p>
+        <h1 className="text-2xl font-semibold text-brand">Profesionales de Oficios</h1>
+        <p className="mt-1 text-sm text-brand/80">Profesionales verificados para tus necesidades.</p>
         <div className="mt-6">
           <ProfilesHeader category="workers" />
         </div>

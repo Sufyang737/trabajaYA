@@ -49,7 +49,7 @@ export default async function ProfilesList({
 
   if (!profiles.length) {
     return (
-      <div className="rounded-2xl border border-black/10 bg-white p-8 text-center text-sm text-black/60">
+      <div className="rounded-2xl border border-brand/10 bg-white p-8 text-center text-sm text-muted-foreground">
         No hay resultados por el momento.
       </div>
     );
@@ -58,7 +58,7 @@ export default async function ProfilesList({
   const count = profiles.length;
   return (
     <div>
-      <div className="mb-4 text-sm text-black/60">{`Mostrando ${count} profesionales`}</div>
+      <div className="mb-4 text-sm text-brand/80">{`Mostrando ${count} profesionales`}</div>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {profiles.map(({ profile, subcat }) => {
           const label = SUBCATEGORY_OPTIONS[category].find((o) => o.key === subcat)?.label;
