@@ -1,0 +1,76 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff; /* Always white */
+  --foreground: #111827; /* Gray-900 */
+  --brand: #ef4444; /* red-500 */
+  --brand-foreground: #ffffff;
+  --muted: #f8fafc; /* slate-50 */
+  --muted-foreground: #475569; /* slate-600 */
+  --radius-md: 12px;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-brand: var(--brand);
+  --color-brand-foreground: var(--brand-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+/* Force light theme only */
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Simple, accessible motion utilities */
+@keyframes fade-in {
+  from { opacity: 0 }
+  to { opacity: 1 }
+}
+
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(8px) }
+  to { opacity: 1; transform: translateY(0) }
+}
+
+.animate-fade-in { animation: fade-in 280ms ease-out both }
+.animate-slide-up { animation: slide-up 320ms cubic-bezier(.22,.65,.25,1) both }
+
+/* Lightweight skeleton */
+@keyframes shimmer {
+  0% { background-position: -468px 0 }
+  100% { background-position: 468px 0 }
+}
+.skeleton {
+  border-radius: 0.5rem;
+  background: #eee;
+  background-image: linear-gradient(90deg, #eee 0, #f5f5f5 40px, #eee 80px);
+  background-size: 600px 100%;
+  animation: shimmer 1.2s infinite linear;
+}
+
+/* Component primitives */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 2.5rem;
+  padding: 0 1rem;
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition: all 180ms ease;
+}
+.btn-primary { background: var(--brand); color: var(--brand-foreground) }
+.btn-primary:hover { filter: brightness(0.95) }
+.btn-primary:active { transform: translateY(1px) }
+.btn-outline { background: #fff; color: #111827; border: 1px solid rgba(0,0,0,0.1) }
+.btn-outline:hover { background: var(--muted) }
+.badge { display:inline-flex; align-items:center; gap:.25rem; border:1px solid rgba(0,0,0,.1); border-radius:999px; padding:.125rem .5rem; font-size:.75rem }
