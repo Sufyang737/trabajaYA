@@ -8,16 +8,18 @@ export default async function ProfilesList({
   category,
   limit = 30,
   filters,
+  page = 1,
 }: {
   category: Category;
   limit?: number;
   filters?: { q?: string; subcat?: string; city?: string; hood?: string };
+  page?: number;
 }) {
   let profiles: { profile: any; subcat?: string }[] = [];
   try {
     const pb = getPocketBase();
     const subFilter = filters?.subcat ? ` && subcategory = "${filters.subcat}"` : "";
-    const res = await pb.collection("interests").getList(1, limit, {
+    const res = await pb.collection("interests").getList(page, limit, {
       filter: `category = "${category}"${subFilter}`,
       expand: "profile_id",
       sort: "-created",

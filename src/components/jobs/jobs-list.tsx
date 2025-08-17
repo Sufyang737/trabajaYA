@@ -2,19 +2,20 @@ import PocketBase from "pocketbase";
 import JobsCard from "@/components/jobs/jobs-card";
 
 type JobsListProps = {
-  limit?: number;
+  perPage?: number;
+  page?: number;
 };
 
-export default async function JobsList({ limit = 12 }: JobsListProps) {
+export default async function JobsList({ perPage = 12, page = 1 }: JobsListProps) {
   const pbUrl = process.env.POCKETBASE_URL || "";
-  const token = process.env.POCKETBEASE_ADMIN_TOKEN || process.env.POCKETBASE_ADMIN_TOKEN || "";
+  const token = process.env.POCKETBASE_ADMIN_TOKEN || "";
   const pb = new PocketBase(pbUrl);
   if (token) pb.authStore.save(token, null);
 
   let items: any[] = [];
   try {
-    if (!pbUrl || !token) throw new Error("PB config missing");
-    const res = await pb.collection("jobs").getList(1, limit, {
+    if (!pbUrl || !token) throw new Error("PocketBase config missing");
+    const res = await pb.collection("jobs").getList(page, perPage, {
       filter: 'status = "active"',
       sort: "-created",
     });
@@ -43,4 +44,3 @@ export default async function JobsList({ limit = 12 }: JobsListProps) {
     </div>
   );
 }
-

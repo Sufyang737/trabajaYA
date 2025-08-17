@@ -1,6 +1,6 @@
 "use client";
 
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, motion } from "framer-motion";
 import { usePathname } from "next/navigation";
 
 const variants = {
@@ -26,4 +26,3 @@ export default function OnboardingTransitionLayout({ children }: { children: Rea
     </AnimatePresence>
   );
 }
-
