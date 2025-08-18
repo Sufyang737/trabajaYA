@@ -26,4 +26,3 @@ export default function OnboardingTransitionLayout({ children }: { children: Rea
     </AnimatePresence>
   );
 }
-
