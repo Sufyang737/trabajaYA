@@ -60,7 +60,7 @@ export function Navbar1({ logo = defaultLogo, menu = defaultMenu }: Navbar1Props
   return (
     <header className="w-full border-b border-black/10 bg-white">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid h-16 grid-cols-[auto_1fr_auto] items-center">
+        <div className="grid h-16 lg:h-20 grid-cols-[auto_1fr_auto] items-center">
           {/* Left: Logo */}
           <div className="justify-self-start">
             <Link href={logo.url} className="flex items-center gap-2" aria-label={logo.title}>
