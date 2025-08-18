@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { fileUrl } from "@/services/pb";
+import { Star, MapPin } from "lucide-react";
 
 type Profile = {
   id: string;
@@ -30,11 +31,21 @@ export default function ProfileCard({ profile, subcategory }: { profile: Profile
           <div className="flex items-start justify-between gap-3">
             <h3 className="line-clamp-1 text-base font-semibold text-foreground">{name}</h3>
             {typeof profile.rating === "number" && (
-              <span className="text-xs text-black">{profile.rating.toFixed(1)}</span>
+              <div className="flex items-center gap-1 text-xs text-brand">
+                <Star className="h-4 w-4 fill-brand text-brand" />
+                {profile.rating.toFixed(1)}
+              </div>
             )}
           </div>
-          {subcategory && <div className="text-sm text-black">{subcategory}</div>}
-          {location && <div className="text-xs text-muted-foreground">{location}</div>}
+          {subcategory && (
+            <span className="inline-block rounded-full bg-brand/10 px-2 py-0.5 text-xs text-brand">{subcategory}</span>
+          )}
+          {location && (
+            <div className="flex items-center gap-1 text-xs text-muted-foreground">
+              <MapPin className="h-3.5 w-3.5 text-brand" />
+              <span>{location}</span>
+            </div>
+          )}
         </div>
       </article>
     </Link>

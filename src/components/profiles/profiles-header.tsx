@@ -3,6 +3,7 @@
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useState, useTransition } from "react";
 import { SUBCATEGORY_OPTIONS, type CategoryKey } from "@/lib/categories";
+import { Search, SlidersHorizontal } from "lucide-react";
 
 export default function ProfilesHeader({ category }: { category: CategoryKey }) {
   const router = useRouter();
@@ -35,18 +36,22 @@ export default function ProfilesHeader({ category }: { category: CategoryKey }) 
 
   return (
     <div>
-      <form onSubmit={onSubmit} className="flex gap-2">
-        <input
-          value={q}
-          onChange={(e) => setQ(e.target.value)}
-          placeholder="Buscar profesionales por nombre, oficio o especialidad..."
-          className="h-10 w-full flex-1 rounded-lg border border-black bg-white px-3 text-sm focus:outline-none focus:ring-2 focus:ring-black/40"
-        />
+      <form onSubmit={onSubmit} className="flex items-center gap-2">
+        <div className="relative flex-1">
+          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-brand" />
+          <input
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            placeholder="Buscar profesionales por nombre, oficio o especialidad..."
+            className="h-10 w-full rounded-lg border border-brand bg-white pl-9 pr-3 text-sm text-brand placeholder:text-brand/60 focus:outline-none focus:ring-2 focus:ring-brand/40"
+          />
+        </div>
         <button
           type="button"
           onClick={() => setShowFilters((v) => !v)}
-          className="h-10 rounded-lg border border-brand bg-brand px-3 text-sm font-medium text-brand-foreground"
+          className="flex h-10 items-center gap-1 rounded-lg border border-brand bg-brand px-3 text-sm font-medium text-brand-foreground"
         >
+          <SlidersHorizontal className="h-4 w-4" />
           Filtros
         </button>
       </form>
@@ -55,7 +60,7 @@ export default function ProfilesHeader({ category }: { category: CategoryKey }) 
           <button
             onClick={() => updateSearch({ subcat: "" })}
             className={`whitespace-nowrap rounded-full border px-3 py-1 text-xs ${
-              currentSub ? "border-brand/20 text-black" : "border-brand bg-brand text-brand-foreground"
+              currentSub ? "border-brand text-brand" : "border-brand bg-brand text-brand-foreground"
             }`}
             disabled={isPending}
           >
@@ -68,7 +73,7 @@ export default function ProfilesHeader({ category }: { category: CategoryKey }) 
               className={`whitespace-nowrap rounded-full border px-3 py-1 text-xs ${
                 currentSub === o.key
                   ? "border-brand bg-brand text-brand-foreground"
-                  : "border-brand/20 text-black"
+                  : "border-brand text-brand"
               }`}
               disabled={isPending}
             >
