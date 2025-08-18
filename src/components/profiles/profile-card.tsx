@@ -31,18 +31,18 @@ export default function ProfileCard({ profile, subcategory }: { profile: Profile
           <div className="flex items-start justify-between gap-3">
             <h3 className="line-clamp-1 text-base font-semibold text-foreground">{name}</h3>
             {typeof profile.rating === "number" && (
-              <div className="flex items-center gap-1 text-xs text-brand">
+              <div className="flex items-center gap-1 text-xs text-black">
                 <Star className="h-4 w-4 fill-brand text-brand" />
                 {profile.rating.toFixed(1)}
               </div>
             )}
           </div>
           {subcategory && (
-            <span className="inline-block rounded-full bg-brand/10 px-2 py-0.5 text-xs text-brand">{subcategory}</span>
+            <span className="inline-block rounded-full bg-brand/10 px-2 py-0.5 text-xs text-black">{subcategory}</span>
           )}
           {location && (
             <div className="flex items-center gap-1 text-xs text-muted-foreground">
-              <MapPin className="h-3.5 w-3.5 text-brand" />
+              <MapPin className="h-3.5 w-3.5 text-black" />
               <span>{location}</span>
             </div>
           )}
