@@ -65,7 +65,13 @@ export function Navbar1({ logo = defaultLogo, menu = defaultMenu }: Navbar1Props
           <div className="justify-self-start">
             <Link href={logo.url} className="flex items-center gap-2" aria-label={logo.title}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={logo.src} width={200} height={60} className="h-14 w-auto" alt={logo.alt} />
+              <img
+                src={logo.src}
+                width={240}
+                height={72}
+                className="h-16 w-auto"
+                alt={logo.alt}
+              />
             </Link>
           </div>
 
@@ -97,6 +103,9 @@ export function Navbar1({ logo = defaultLogo, menu = defaultMenu }: Navbar1Props
 
           {/* Right: Auth + Mobile menu */}
           <div className="justify-self-end flex items-center gap-2">
+            <Link href="/cargar-trabajo">
+              <Button size="sm">Cargar trabajo</Button>
+            </Link>
             <SignedOut>
               <SignInButton mode="modal">
                 <Button variant="outline" size="sm">Iniciar Sesión</Button>
@@ -122,7 +131,7 @@ export function Navbar1({ logo = defaultLogo, menu = defaultMenu }: Navbar1Props
             <div className="mb-4 flex items-center justify-between">
               <Link href={logo.url} className="flex items-center gap-2" onClick={() => setOpen(false)}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={logo.src} className="max-h-8" alt={logo.alt} />
+                <img src={logo.src} className="h-12 w-auto" alt={logo.alt} />
               </Link>
               <Button variant="outline" size="icon" onClick={() => setOpen(false)} aria-label="Cerrar">×</Button>
             </div>
@@ -143,6 +152,9 @@ export function Navbar1({ logo = defaultLogo, menu = defaultMenu }: Navbar1Props
                   )}
                 </div>
               ))}
+              <Link href="/cargar-trabajo" onClick={() => setOpen(false)}>
+                <Button className="w-full">Cargar trabajo</Button>
+              </Link>
               <div className="mt-4 flex flex-col gap-2">
                 <SignedOut>
                   <SignInButton mode="modal">
