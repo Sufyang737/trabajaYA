@@ -97,6 +97,9 @@ export function Navbar1({ logo = defaultLogo, menu = defaultMenu }: Navbar1Props
 
           {/* Right: Auth + Mobile menu */}
           <div className="justify-self-end flex items-center gap-2">
+            <Link href="/cargar-trabajo">
+              <Button size="sm">Cargar trabajo</Button>
+            </Link>
             <SignedOut>
               <SignInButton mode="modal">
                 <Button variant="outline" size="sm">Iniciar Sesión</Button>
@@ -143,6 +146,9 @@ export function Navbar1({ logo = defaultLogo, menu = defaultMenu }: Navbar1Props
                   )}
                 </div>
               ))}
+              <Link href="/cargar-trabajo" onClick={() => setOpen(false)}>
+                <Button className="w-full">Cargar trabajo</Button>
+              </Link>
               <div className="mt-4 flex flex-col gap-2">
                 <SignedOut>
                   <SignInButton mode="modal">
