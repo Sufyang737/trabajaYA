@@ -65,7 +65,13 @@ export function Navbar1({ logo = defaultLogo, menu = defaultMenu }: Navbar1Props
           <div className="justify-self-start">
             <Link href={logo.url} className="flex items-center gap-2" aria-label={logo.title}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={logo.src} width={200} height={60} className="h-14 w-auto" alt={logo.alt} />
+              <img
+                src={logo.src}
+                width={240}
+                height={72}
+                className="h-16 w-auto"
+                alt={logo.alt}
+              />
             </Link>
           </div>
 
@@ -125,7 +131,7 @@ export function Navbar1({ logo = defaultLogo, menu = defaultMenu }: Navbar1Props
             <div className="mb-4 flex items-center justify-between">
               <Link href={logo.url} className="flex items-center gap-2" onClick={() => setOpen(false)}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={logo.src} className="max-h-8" alt={logo.alt} />
+                <img src={logo.src} className="h-12 w-auto" alt={logo.alt} />
               </Link>
               <Button variant="outline" size="icon" onClick={() => setOpen(false)} aria-label="Cerrar">×</Button>
             </div>
