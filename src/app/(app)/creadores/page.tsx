@@ -1,27 +1,46 @@
 import ProfilesList from "@/components/profiles/profiles-list";
-import ProfilesFilters from "@/components/profiles/profiles-filters";
-import { Suspense } from "react";
+import ProfilesHeader from "@/components/profiles/profiles-header";
 import ProfilesSkeleton from "@/components/profiles/profiles-skeleton";
-
-export default function CreadoresPage({ searchParams }: { searchParams?: Record<string, string> }) {
+import PageShell from "@/components/layout/page-shell";
+import { Suspense } from "react";
+import JobsList from "@/components/jobs/jobs-list";
+export default async function CreadoresPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
+  const sp = await searchParams;
+  const filters = {
+    q: Array.isArray(sp.q) ? sp.q[0] : sp.q,
+    subcat: Array.isArray(sp.subcat) ? sp.subcat[0] : sp.subcat,
+    city: Array.isArray(sp.city) ? sp.city[0] : sp.city,
+    hood: Array.isArray(sp.hood) ? sp.hood[0] : sp.hood,
+  };
   return (
-    <main className="min-h-[calc(100vh-80px)] bg-white">
-      <section className="mx-auto max-w-6xl px-6 py-8">
-        <h1 className="text-2xl font-semibold text-black/90">Creadores</h1>
-        <p className="mt-1 text-sm text-black/60">Talento creativo para impulsar tu marca.</p>
-        <div className="mt-6">
-          <ProfilesFilters category="creators" />
-        </div>
-        <div className="mt-6">
-          <Suspense fallback={<ProfilesSkeleton />}>
-            {/* @ts-expect-error Async Server Component */}
-            <ProfilesList
-              category="creators"
-              filters={{ q: searchParams?.q, subcat: searchParams?.subcat, city: searchParams?.city, hood: searchParams?.hood }}
-            />
-          </Suspense>
-        </div>
-      </section>
-    </main>
+    <PageShell title="Creadores" description="Talento creativo para impulsar tu marca.">
+      <ProfilesHeader category="creators" />
+      <Suspense fallback={<ProfilesSkeleton />}>
+        {/* @ts-expect-error Async Server Component */}
+        <ProfilesList
+          category="creators"
+          filters={filters}
+          hideEmpty
+        />
+      </Suspense>
+      <div className="mt-8">
+        <h2 className="mb-3 text-lg font-semibold text-black/80">Trabajos recientes para creadores</h2>
+        {/* Listado de trabajos filtrados por categoría = creators */}
+        {/* @ts-expect-error Async Server Component */}
+        <JobsList
+          filters={{
+            category: "creators",
+            subcat: filters.subcat,
+            city: filters.city,
+            hood: filters.hood,
+            q: filters.q,
+          }}
+        />
+      </div>
+    </PageShell>
   );
 }
