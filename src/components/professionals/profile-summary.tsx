@@ -1,7 +1,22 @@
-import { notFound } from "next/navigation";
-import { getProfileData } from "./_data";
+type Profile = {
+  bio?: string;
+  created?: string;
+  neighborhood?: string;
+  city?: string;
+  country?: string;
+};
 
-export const dynamic = "force-dynamic";
+type Portfolio = {
+  courses_url?: string;
+  diplomas_url?: string;
+};
+
+type Availability = {
+  day_of_week: string;
+  start_time: string;
+  end_time: string;
+  is_active?: boolean;
+};
 
 const DAY_LABEL: Record<string, string> = {
   monday: "Lunes",
@@ -13,19 +28,17 @@ const DAY_LABEL: Record<string, string> = {
   sunday: "Domingo",
 };
 
-export default async function ProfessionalPage({ params }: { params: { id: string } }) {
-  const data = await getProfileData(params.id);
-  if (!data) return notFound();
-  const { profile, portfolio, availability } = data;
-
+export default function ProfileSummary({
+  profile,
+  portfolio,
+  availability,
+}: {
+  profile: Profile;
+  portfolio?: Portfolio | null;
+  availability: Availability[];
+}) {
   const memberSince = profile.created ? new Date(profile.created).getFullYear() : null;
   const location = [profile.neighborhood, profile.city, profile.country].filter(Boolean).join(", ");
-  const metrics = {
-    jobs: profile.jobs_completed ?? 0,
-    success: profile.success_rate ? `${profile.success_rate}%` : "0%",
-    onTime: profile.on_time_rate ? `${profile.on_time_rate}%` : "0%",
-    since: memberSince ?? "-",
-  };
   const certs = [portfolio?.diplomas_url, portfolio?.courses_url].filter(Boolean) as string[];
 
   const daysOrder = [
@@ -45,12 +58,12 @@ export default async function ProfessionalPage({ params }: { params: { id: strin
   }
 
   return (
-    <>
-      {profile.bio && <p className="mt-4 text-sm text-black/80">{profile.bio}</p>}
+    <div className="grid gap-6">
+      {profile.bio && <p className="mt-2 text-sm text-black/80">{profile.bio}</p>}
 
-      <div className="mt-6 grid gap-6 lg:grid-cols-2">
+      <div className="grid gap-6 lg:grid-cols-2">
         <div className="rounded-2xl border border-brand/10 bg-white p-6">
-          <h2 className="mb-4 text-lg font-semibold text-foreground">Información General</h2>
+          <h4 className="mb-4 text-lg font-semibold text-foreground">Información General</h4>
           <ul className="grid gap-2 text-sm text-black/80">
             {memberSince && (
               <li>
@@ -66,7 +79,7 @@ export default async function ProfessionalPage({ params }: { params: { id: strin
         </div>
 
         <div className="rounded-2xl border border-brand/10 bg-white p-6">
-          <h2 className="mb-4 text-lg font-semibold text-foreground">Certificaciones</h2>
+          <h4 className="mb-4 text-lg font-semibold text-foreground">Certificaciones</h4>
           {certs.length ? (
             <ul className="grid gap-2 text-sm text-black/80">
               {certs.map((c, i) => (
@@ -79,8 +92,8 @@ export default async function ProfessionalPage({ params }: { params: { id: strin
         </div>
       </div>
 
-      <div className="mt-6 rounded-2xl border border-brand/10 bg-white p-6">
-        <h2 className="mb-4 text-lg font-semibold text-foreground">Disponibilidad</h2>
+      <div className="rounded-2xl border border-brand/10 bg-white p-6">
+        <h4 className="mb-4 text-lg font-semibold text-foreground">Disponibilidad</h4>
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 md:grid-cols-7">
           {daysOrder.map((d) => {
             const slot = availMap[d];
@@ -95,7 +108,7 @@ export default async function ProfessionalPage({ params }: { params: { id: strin
           })}
         </div>
       </div>
-    </>
+    </div>
   );
 }
 

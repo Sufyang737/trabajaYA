@@ -43,6 +43,31 @@ export default function JobForm() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Enums como opciones seleccionables
+  const CURRENCY_OPTIONS = [
+    { value: "ARS", label: "ARS" },
+    { value: "USD", label: "USD" },
+  ];
+
+  const PRICE_UNIT_OPTIONS = [
+    { value: "hour", label: "Por hora" },
+    { value: "project", label: "Por proyecto" },
+    { value: "monthly", label: "Por mes" },
+  ];
+
+  const MODALITY_OPTIONS = [
+    { value: "full_time", label: "Tiempo completo" },
+    { value: "part_time", label: "Medio tiempo" },
+    { value: "freelance", label: "Freelance" },
+    { value: "per_hour", label: "Por hora" },
+    { value: "temporary", label: "Temporal" },
+  ];
+
+  const STATUS_OPTIONS = [
+    { value: "active", label: "Activo" },
+    { value: "draft", label: "Borrador" },
+  ];
+
   function update<K extends keyof FormData>(key: K, value: FormData[K]) {
     setData((prev) => ({ ...prev, [key]: value }));
   }
@@ -158,45 +183,65 @@ export default function JobForm() {
           </div>
           <div>
             <Label htmlFor="currency">Moneda</Label>
-            <Input
+            <select
               id="currency"
               value={data.currency}
               onChange={(e) => update("currency", e.target.value)}
-              placeholder="ARS"
-              className="mt-1"
-            />
+              className="mt-1 w-full rounded-md border border-brand/20 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand"
+            >
+              {CURRENCY_OPTIONS.map((o) => (
+                <option key={o.value} value={o.value}>
+                  {o.label}
+                </option>
+              ))}
+            </select>
           </div>
           <div>
             <Label htmlFor="price_unit">Unidad</Label>
-            <Input
+            <select
               id="price_unit"
               value={data.price_unit}
               onChange={(e) => update("price_unit", e.target.value)}
-              placeholder="hora"
-              className="mt-1"
-            />
+              className="mt-1 w-full rounded-md border border-brand/20 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand"
+            >
+              {PRICE_UNIT_OPTIONS.map((o) => (
+                <option key={o.value} value={o.value}>
+                  {o.label}
+                </option>
+              ))}
+            </select>
           </div>
         </div>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
             <Label htmlFor="modality">Modalidad</Label>
-            <Input
+            <select
               id="modality"
               value={data.modality}
               onChange={(e) => update("modality", e.target.value)}
-              placeholder="full_time"
-              className="mt-1"
-            />
+              className="mt-1 w-full rounded-md border border-brand/20 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand"
+            >
+              {MODALITY_OPTIONS.map((o) => (
+                <option key={o.value} value={o.value}>
+                  {o.label}
+                </option>
+              ))}
+            </select>
           </div>
           <div>
             <Label htmlFor="status">Estado</Label>
-            <Input
+            <select
               id="status"
               value={data.status}
               onChange={(e) => update("status", e.target.value)}
-              placeholder="active"
-              className="mt-1"
-            />
+              className="mt-1 w-full rounded-md border border-brand/20 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand"
+            >
+              {STATUS_OPTIONS.map((o) => (
+                <option key={o.value} value={o.value}>
+                  {o.label}
+                </option>
+              ))}
+            </select>
           </div>
         </div>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
@@ -239,4 +284,3 @@ export default function JobForm() {
     </>
   );
 }
-

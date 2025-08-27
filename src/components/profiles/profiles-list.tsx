@@ -8,10 +8,12 @@ export default async function ProfilesList({
   category,
   limit = 30,
   filters,
+  hideEmpty,
 }: {
   category: Category;
   limit?: number;
   filters?: { q?: string; subcat?: string; city?: string; hood?: string };
+  hideEmpty?: boolean;
 }) {
   let profiles: { profile: any; subcat?: string }[] = [];
   try {
@@ -48,6 +50,7 @@ export default async function ProfilesList({
   }
 
   if (!profiles.length) {
+    if (hideEmpty) return null;
     return (
       <div className="rounded-2xl border border-brand/10 bg-white p-8 text-center text-sm text-muted-foreground">
         No hay resultados por el momento.

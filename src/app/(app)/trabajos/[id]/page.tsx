@@ -1,6 +1,12 @@
 import Link from "next/link";
 import PocketBase from "pocketbase";
 import { notFound } from "next/navigation";
+import { getProfileData } from "../../profesionales/[id]/_data";
+import JobProfileTabs from "@/components/jobs/job-profile-tabs";
+import ProfileSummary from "@/components/professionals/profile-summary";
+import ServicesList from "@/components/professionals/services-list";
+import PortfolioSection from "@/components/professionals/portfolio-section";
+import ReviewsSection from "@/components/professionals/reviews-section";
 
 export const dynamic = "force-dynamic";
 
@@ -10,6 +16,7 @@ type JobRecord = {
   description?: string;
   category?: string;
   subcategory?: string;
+  profile_id?: string;
   price?: number;
   currency?: "ARS" | "USD" | string;
   price_unit?: "hour" | "project" | "monthly" | string;
@@ -19,6 +26,16 @@ type JobRecord = {
   neighborhood?: string;
   images?: string[];
   created?: string;
+};
+
+const DAY_LABEL: Record<string, string> = {
+  monday: "Lunes",
+  tuesday: "Martes",
+  wednesday: "Miércoles",
+  thursday: "Jueves",
+  friday: "Viernes",
+  saturday: "Sábado",
+  sunday: "Domingo",
 };
 
 const CATEGORY_LABEL: Record<string, string> = {
@@ -95,8 +112,185 @@ async function getJob(id: string) {
   }
 }
 
-export default async function JobDetailPage({ params }: { params: { id: string } }) {
-  const data = await getJob(params.id);
+function CreatorServiceView({ job, cat, sub, price, modality, location, created, images, profileData }: any) {
+  const profile = profileData?.profile;
+  const portfolio = profileData?.portfolio;
+  const availability = profileData?.availability || [];
+  const memberSince = profile?.created ? new Date(profile.created).getFullYear() : null;
+  const locationProfile = [profile?.neighborhood, profile?.city, profile?.country].filter(Boolean).join(", ");
+  const certs = [portfolio?.diplomas_url, portfolio?.courses_url].filter(Boolean) as string[];
+  const daysOrder = ["monday","tuesday","wednesday","thursday","friday","saturday","sunday"];
+  const availMap: Record<string, { start: string; end: string } | null> = {};
+  for (const d of daysOrder) availMap[d] = null;
+  for (const a of availability) {
+    if (a.is_active === false) continue;
+    availMap[a.day_of_week] = { start: a.start_time, end: a.end_time };
+  }
+  return (
+    <main className="min-h-[calc(100vh-80px)] bg-white">
+      <section className="mx-auto max-w-5xl px-6 py-8">
+        <div className="mb-4 text-sm">
+          <Link href="/buscar-freelancer" className="text-black/60 hover:text-black">← Volver</Link>
+        </div>
+
+        {/* Cabecera de perfil/servicio */}
+        <div className="rounded-2xl border border-black/10 bg-white p-6 shadow-sm">
+          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <div>
+              <h1 className="text-2xl font-semibold text-foreground">{job.title || sub || "Servicio de creador"}</h1>
+              <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-black/70">
+                {cat && <span className="badge">{cat}</span>}
+                {sub && <span className="badge">{sub}</span>}
+                {modality && <span className="badge">{modality}</span>}
+                {location && <span className="badge">{location}</span>}
+                {created && <span className="badge">Publicado {created}</span>}
+                <span className="badge">Destacado</span>
+                <span className="badge">Verificado</span>
+              </div>
+              {job.description && (
+                <p className="mt-3 max-w-2xl text-sm text-black/80">{job.description}</p>
+              )}
+            </div>
+            <div className="flex gap-2 self-start">
+              <button className="btn btn-primary">Contactar</button>
+              <button className="btn btn-outline">Compartir perfil</button>
+            </div>
+          </div>
+        </div>
+
+        {/* Galería de imágenes del trabajo */}
+        {images && images.length > 0 && (
+          <div className="mt-4 grid grid-cols-3 gap-2">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={images[0]} alt="Imagen principal" className="col-span-3 h-64 w-full rounded-xl object-cover sm:col-span-2" />
+            {images.slice(1, 4).map((src: string, i: number) => (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img key={i} src={src} alt="Imagen" className="h-32 w-full rounded-xl object-cover" />
+            ))}
+          </div>
+        )}
+
+        {/* Métricas */}
+        <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="rounded-2xl border border-black/10 bg-white p-6">
+            <div className="text-sm text-black/60">Calificación</div>
+            <div className="mt-1 text-2xl font-semibold text-foreground">— ⭐</div>
+          </div>
+          <div className="rounded-2xl border border-black/10 bg-white p-6">
+            <div className="text-sm text-black/60">Seguidores</div>
+            <div className="mt-1 text-2xl font-semibold text-foreground">—</div>
+          </div>
+          <div className="rounded-2xl border border-black/10 bg-white p-6">
+            <div className="text-sm text-black/60">Vistas promedio</div>
+            <div className="mt-1 text-2xl font-semibold text-foreground">—</div>
+          </div>
+          <div className="rounded-2xl border border-black/10 bg-white p-6">
+            <div className="text-sm text-black/60">Engagement</div>
+            <div className="mt-1 text-2xl font-semibold text-foreground">—</div>
+          </div>
+        </div>
+
+        {/* Contenido + Aside */}
+        <div className="mt-6 grid gap-6 lg:grid-cols-3">
+          <div className="grid gap-6 lg:col-span-2">
+            <JobProfileTabs
+              resumen={
+                <div className="grid gap-6">
+                  <div>
+                    <h3 className="mb-2 text-lg font-semibold text-foreground">Resumen del servicio</h3>
+                    <p className="text-sm text-black/80">
+                      Presentación del creador y el servicio ofrecido. Podés detallar el alcance, entregables y formatos. Si no hay
+                      descripción específica, se muestra este texto guía.
+                    </p>
+                  </div>
+                  {profileData && (
+                    <ProfileSummary
+                      profile={profile}
+                      portfolio={portfolio}
+                      availability={availability}
+                    />
+                  )}
+                </div>
+              }
+              portfolio={<PortfolioSection items={[portfolio?.diplomas_url, portfolio?.courses_url].filter(Boolean) as string[]} />}
+              servicios={
+                profileData ? (
+                  <ServicesList
+                    interests={profileData.interests}
+                    baseHref={`/profesionales/${profile?.id}/servicios`}
+                  />
+                ) : (
+                  <div />
+                )
+              }
+              resenas={<ReviewsSection />}
+            />
+
+            <div className="rounded-2xl border border-black/10 bg-white p-6">
+              <h3 className="mb-3 text-lg font-semibold text-foreground">Estadísticas</h3>
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div className="rounded-lg border border-black/10 p-4">
+                  <div className="text-xs text-black/60">Visualizaciones</div>
+                  <div className="mt-1 text-xl font-semibold text-foreground">—</div>
+                </div>
+                <div className="rounded-lg border border-black/10 p-4">
+                  <div className="text-xs text-black/60">Crecimiento mensual</div>
+                  <div className="mt-1 text-xl font-semibold text-foreground">—</div>
+                </div>
+                <div className="rounded-lg border border-black/10 p-4">
+                  <div className="text-xs text-black/60">Engagement</div>
+                  <div className="mt-1 text-xl font-semibold text-foreground">—</div>
+                </div>
+                <div className="rounded-lg border border-black/10 p-4">
+                  <div className="text-xs text-black/60">Colaboraciones</div>
+                  <div className="mt-1 text-xl font-semibold text-foreground">—</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <aside className="h-fit rounded-2xl border border-black/10 bg-white p-6">
+            <h3 className="mb-3 text-lg font-semibold text-foreground">Información de contacto</h3>
+            <ul className="grid gap-2 text-sm text-black/80">
+              {price && (
+                <li>
+                  <span className="font-medium">Precio:</span> {price}
+                </li>
+              )}
+              {modality && (
+                <li>
+                  <span className="font-medium">Modalidad:</span> {modality}
+                </li>
+              )}
+              {location && (
+                <li>
+                  <span className="font-medium">Ubicación:</span> {location}
+                </li>
+              )}
+              <li>
+                <span className="font-medium">Disponibilidad:</span> —
+              </li>
+              <li>
+                <span className="font-medium">Tiempo de respuesta:</span> —
+              </li>
+              <li>
+                <span className="font-medium">Idiomas:</span> —
+              </li>
+            </ul>
+            <div className="mt-4 flex gap-2">
+              <button className="btn btn-primary">Postular</button>
+              <button className="btn btn-outline">Guardar</button>
+            </div>
+          </aside>
+        </div>
+      </section>
+    </main>
+  );
+}
+
+export default async function JobDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const data = await getJob(id);
   if (!data?.job) return notFound();
 
   const { job, fileBase } = data;
@@ -107,6 +301,23 @@ export default async function JobDetailPage({ params }: { params: { id: string }
   const created = job.created ? new Date(job.created).toLocaleDateString("es-AR") : null;
   const location = [job.neighborhood, job.city].filter(Boolean).join(", ");
   const images = (job.images || []).map((img) => `${fileBase}/jobs/${job.id}/${img}`);
+
+  if (job.category === "creators") {
+    const profileData = job.profile_id ? await getProfileData(job.profile_id) : null;
+    return (
+      <CreatorServiceView
+        job={job}
+        cat={cat}
+        sub={sub}
+        price={price}
+        modality={modality}
+        location={location}
+        created={created}
+        images={images}
+        profileData={profileData}
+      />
+    );
+  }
 
   return (
     <main className="min-h-[calc(100vh-80px)] bg-white">
@@ -171,4 +382,3 @@ export default async function JobDetailPage({ params }: { params: { id: string }
     </main>
   );
 }
-
