@@ -29,15 +29,7 @@ type JobRecord = {
   created?: string;
 };
 
-const DAY_LABEL: Record<string, string> = {
-  monday: "Lunes",
-  tuesday: "Martes",
-  wednesday: "Miércoles",
-  thursday: "Jueves",
-  friday: "Viernes",
-  saturday: "Sábado",
-  sunday: "Domingo",
-};
+// day labels handled in reused components when needed
 
 const CATEGORY_LABEL: Record<string, string> = {
   workers: "Trabajadores",
@@ -113,20 +105,23 @@ async function getJob(id: string) {
   }
 }
 
-function CreatorServiceView({ job, cat, sub, price, modality, location, created, images, profileData }: any) {
+import type { Profile as TProfile, Portfolio as TPortfolio, Availability as TAvailability, Interest as TInterest } from "../../profesionales/[id]/_data";
+type ProfileData = { profile: TProfile; portfolio: TPortfolio | null; availability: TAvailability[]; interests: TInterest[] } | null;
+type CreatorProps = {
+  job: JobRecord;
+  cat?: string | null;
+  sub?: string | null;
+  price?: string | null;
+  modality?: string | null;
+  location?: string | null;
+  created?: string | null;
+  images: string[];
+  profileData?: ProfileData;
+};
+
+function CreatorServiceView({ job, cat, sub, price, modality, location, created, images, profileData }: CreatorProps) {
   const profile = profileData?.profile;
   const portfolio = profileData?.portfolio;
-  const availability = profileData?.availability || [];
-  const memberSince = profile?.created ? new Date(profile.created).getFullYear() : null;
-  const locationProfile = [profile?.neighborhood, profile?.city, profile?.country].filter(Boolean).join(", ");
-  const certs = [portfolio?.diplomas_url, portfolio?.courses_url].filter(Boolean) as string[];
-  const daysOrder = ["monday","tuesday","wednesday","thursday","friday","saturday","sunday"];
-  const availMap: Record<string, { start: string; end: string } | null> = {};
-  for (const d of daysOrder) availMap[d] = null;
-  for (const a of availability) {
-    if (a.is_active === false) continue;
-    availMap[a.day_of_week] = { start: a.start_time, end: a.end_time };
-  }
   return (
     <main className="min-h-[calc(100vh-80px)] bg-white">
       <section className="mx-auto max-w-5xl px-6 py-8">

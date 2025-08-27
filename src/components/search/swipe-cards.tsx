@@ -1,7 +1,7 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
-import { Heart, X, Star } from "lucide-react";
+import { useRef, useState } from "react";
+import { Heart, X } from "lucide-react";
 
 type Item = {
   id: string;
@@ -15,24 +15,34 @@ type Item = {
 
 export default function SwipeCards({ initialItems }: { initialItems: Item[] }) {
   const [index, setIndex] = useState(0);
-  const [items, setItems] = useState(initialItems);
+  const items = initialItems;
   const topRef = useRef<HTMLDivElement | null>(null);
   const pos = useRef({ x: 0, y: 0, dx: 0, dy: 0, dragging: false });
 
   const current = items[index];
   const next = items[index + 1];
 
-  function onDown(e: React.MouseEvent | React.TouchEvent) {
+  function onDown(e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) {
     pos.current.dragging = true;
-    const point = "touches" in e ? e.touches[0] : (e as any);
-    pos.current.x = point.clientX;
-    pos.current.y = point.clientY;
+    if ("touches" in e && e.touches.length) {
+      pos.current.x = e.touches[0].clientX;
+      pos.current.y = e.touches[0].clientY;
+    } else {
+      const me = e as React.MouseEvent<HTMLDivElement>;
+      pos.current.x = me.clientX;
+      pos.current.y = me.clientY;
+    }
   }
-  function onMove(e: React.MouseEvent | React.TouchEvent) {
+  function onMove(e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) {
     if (!pos.current.dragging) return;
-    const point = "touches" in e ? e.touches[0] : (e as any);
-    pos.current.dx = point.clientX - pos.current.x;
-    pos.current.dy = point.clientY - pos.current.y;
+    if ("touches" in e && e.touches.length) {
+      pos.current.dx = e.touches[0].clientX - pos.current.x;
+      pos.current.dy = e.touches[0].clientY - pos.current.y;
+    } else {
+      const me = e as React.MouseEvent<HTMLDivElement>;
+      pos.current.dx = me.clientX - pos.current.x;
+      pos.current.dy = me.clientY - pos.current.y;
+    }
     if (topRef.current) {
       topRef.current.style.transform = `translate(${pos.current.dx}px, ${pos.current.dy}px) rotate(${pos.current.dx / 20}deg)`;
       topRef.current.style.transition = "none";
@@ -45,41 +55,39 @@ export default function SwipeCards({ initialItems }: { initialItems: Item[] }) {
     }
     pos.current = { x: 0, y: 0, dx: 0, dy: 0, dragging: false };
   }
-  async function onUp() {
-    if (!pos.current.dragging) return;
+  function submitSwipe(action: "like" | "pass") {
+    const offX = action === "like" ? 800 : -800;
+    if (topRef.current) {
+      topRef.current.style.transition = "transform 250ms ease";
+      topRef.current.style.transform = `translate(${offX}px, ${pos.current.dy}px) rotate(${offX / 20}deg)`;
+    }
+    try {
+      fetch("/api/swipes", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ profile_id: current?.id, action }),
+      }).catch(() => {});
+    } catch {}
+    setTimeout(() => {
+      setIndex((i) => Math.min(i + 1, items.length));
+      resetCard();
+    }, 220);
+  }
+
+  function onUp() {
+    if (!pos.current.dragging) return resetCard();
     const shouldLike = pos.current.dx > 100;
     const shouldSkip = pos.current.dx < -100;
-    if (shouldLike || shouldSkip) {
-      const offX = shouldLike ? 800 : -800;
-      if (topRef.current) {
-        topRef.current.style.transition = "transform 250ms ease";
-        topRef.current.style.transform = `translate(${offX}px, ${pos.current.dy}px) rotate(${offX / 20}deg)`;
-      }
-      const action = shouldLike ? "like" : "pass";
-      // Optimistic advance; fire and forget API
-      try {
-        fetch("/api/swipes", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ profile_id: current?.id, action }),
-        }).catch(() => {});
-      } catch {}
-      setTimeout(() => {
-        setIndex((i) => Math.min(i + 1, items.length));
-        resetCard();
-      }, 220);
-    } else {
-      resetCard();
-    }
+    if (shouldLike) return submitSwipe("like");
+    if (shouldSkip) return submitSwipe("pass");
+    resetCard();
   }
 
   function actionSkip() {
-    pos.current.dx = -120;
-    onUp();
+    submitSwipe("pass");
   }
   function actionLike() {
-    pos.current.dx = 120;
-    onUp();
+    submitSwipe("like");
   }
 
   const remaining = items.length - index;
@@ -102,12 +110,12 @@ export default function SwipeCards({ initialItems }: { initialItems: Item[] }) {
           <div
             ref={topRef}
             className="absolute inset-0 z-10 select-none overflow-hidden rounded-2xl border border-black/10 bg-white shadow-md"
-            onMouseDown={onDown as any}
-            onMouseMove={onMove as any}
+            onMouseDown={onDown}
+            onMouseMove={onMove}
             onMouseUp={onUp}
             onMouseLeave={onUp}
-            onTouchStart={onDown as any}
-            onTouchMove={onMove as any}
+            onTouchStart={onDown}
+            onTouchMove={onMove}
             onTouchEnd={onUp}
           >
             {current.image ? (

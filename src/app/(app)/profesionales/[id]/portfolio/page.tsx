@@ -3,8 +3,9 @@ import { getProfileData } from "../_data";
 
 export const dynamic = "force-dynamic";
 
-export default async function PortfolioPage({ params }: { params: { id: string } }) {
-  const data = await getProfileData(params.id);
+export default async function PortfolioPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const data = await getProfileData(id);
   if (!data) return notFound();
   const { portfolio } = data;
   const items = [portfolio?.diplomas_url, portfolio?.courses_url].filter(Boolean) as string[];
@@ -24,4 +25,3 @@ export default async function PortfolioPage({ params }: { params: { id: string }
     </div>
   );
 }
-

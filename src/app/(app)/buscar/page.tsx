@@ -1,6 +1,6 @@
 import { getPocketBase } from "@/services/pb";
 import { auth } from "@clerk/nextjs/server";
-import { SUBCATEGORY_OPTIONS, CATEGORY_LABEL, type CategoryKey } from "@/lib/categories";
+import { SUBCATEGORY_OPTIONS, type CategoryKey } from "@/lib/categories";
 import SwipeCards from "@/components/search/swipe-cards";
 
 type Candidate = {
@@ -25,12 +25,17 @@ async function getCandidates(limit = 25): Promise<Candidate[]> {
         for (const s of sw.items as any[]) swipedIds.add(s.profile_id);
       } catch {}
     }
-    const res = await pb.collection("interests").getList(1, limit, {
+    type InterestRecord = {
+      category: CategoryKey;
+      subcategory?: string;
+      expand?: { profile_id?: { id: string; first_name?: string; last_name?: string; bio?: string; avatar?: string; city?: string; country?: string; neighborhood?: string } };
+    };
+    const res = await pb.collection("interests").getList<InterestRecord>(1, limit, {
       expand: "profile_id",
       sort: "-created",
     });
     const map = new Map<string, Candidate>();
-    for (const it of res.items as any[]) {
+    for (const it of res.items) {
       const p = it.expand?.profile_id;
       if (!p || map.has(p.id)) continue;
       if (swipedIds.has(p.id)) continue;

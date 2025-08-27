@@ -14,22 +14,18 @@ const DAY_LABEL: Record<string, string> = {
   sunday: "Domingo",
 };
 
-export default async function ProfessionalPage({ params }: { params: { id: string } }) {
-  const data = await getProfileData(params.id);
+export default async function ProfessionalPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const data = await getProfileData(id);
   if (!data) return notFound();
-  const { profile, portfolio, availability, interests } = data as any;
+  const { profile, portfolio, availability, interests } = data;
 
   const mainInterest = interests?.[0];
   const isProvider = mainInterest?.category === "providers";
 
   const memberSince = profile.created ? new Date(profile.created).getFullYear() : null;
   const location = [profile.neighborhood, profile.city, profile.country].filter(Boolean).join(", ");
-  const metrics = {
-    jobs: profile.jobs_completed ?? 0,
-    success: profile.success_rate ? `${profile.success_rate}%` : "0%",
-    onTime: profile.on_time_rate ? `${profile.on_time_rate}%` : "0%",
-    since: memberSince ?? "-",
-  };
+  // metrics shown in layout, not needed here
   const certs = [portfolio?.diplomas_url, portfolio?.courses_url].filter(Boolean) as string[];
 
   const daysOrder = [
