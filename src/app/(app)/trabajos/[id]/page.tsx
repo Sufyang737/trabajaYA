@@ -422,6 +422,24 @@ export default async function JobDetailPage({ params }: { params: Promise<{ id: 
                 <button className="btn btn-outline">Guardar</button>
               </div>
             </aside>
+
+            {/* Condiciones comerciales moved below as full-width */}
+          </div>
+
+          {/* Condiciones comerciales - full width rectangle below */}
+          <div className="mt-6 rounded-2xl border border-black/10 bg-white p-6">
+            <h3 className="mb-3 text-lg font-semibold text-foreground">Condiciones comerciales</h3>
+            <ul className="grid gap-2 text-sm text-black/80">
+              <li>
+                <span className="font-medium">Pedido mínimo:</span> $50.000 o 50 unidades surtidas
+              </li>
+              <li>
+                <span className="font-medium">Formas de pago:</span> transferencia, efectivo, tarjetas (hasta 3 cuotas sin interés)
+              </li>
+              <li>
+                <span className="font-medium">Tiempo de entrega:</span> 3–5 días hábiles (AMBA), 5–10 (interior)
+              </li>
+            </ul>
           </div>
         </section>
       </main>
