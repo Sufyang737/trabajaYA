@@ -2,11 +2,12 @@ import Link from "next/link";
 import PocketBase from "pocketbase";
 import { notFound } from "next/navigation";
 import { getProfileData } from "../../profesionales/[id]/_data";
-import JobProfileTabs from "@/components/jobs/job-profile-tabs";
 import ProfileSummary from "@/components/professionals/profile-summary";
 import ServicesList from "@/components/professionals/services-list";
 import PortfolioSection from "@/components/professionals/portfolio-section";
 import ReviewsSection from "@/components/professionals/reviews-section";
+import JobProfileTabs from "@/components/jobs/job-profile-tabs";
+import ProviderHero from "@/components/providers/provider-hero";
 
 export const dynamic = "force-dynamic";
 
@@ -316,6 +317,114 @@ export default async function JobDetailPage({ params }: { params: Promise<{ id: 
         images={images}
         profileData={profileData}
       />
+    );
+  }
+
+  if (job.category === "providers") {
+    const profileData = job.profile_id ? await getProfileData(job.profile_id) : null;
+    const nameLocation = location;
+    return (
+      <main className="min-h-[calc(100vh-80px)] bg-white">
+        <section className="mx-auto max-w-5xl px-6 py-8">
+          <div className="mb-4 text-sm">
+            <Link href="/buscar-freelancer" className="text-black/60 hover:text-black">← Volver</Link>
+          </div>
+
+          {/* Hero de proveedor */}
+          {profileData && (
+            <ProviderHero profile={profileData.profile} subcategoryLabel={sub} />
+          )}
+
+          {/* Tabs y contenido reutilizado del perfil */}
+          <div className="mt-6 grid gap-6 lg:grid-cols-3">
+            <div className="grid gap-6 lg:col-span-2">
+              <JobProfileTabs
+                resumen={
+                  <div className="grid gap-6">
+                    {profileData && (
+                      <ProfileSummary
+                        profile={profileData.profile}
+                        portfolio={profileData.portfolio}
+                        availability={profileData.availability}
+                      />
+                    )}
+                  </div>
+                }
+                portfolio={
+                  profileData ? (
+                    <PortfolioSection
+                      items={[
+                        profileData.portfolio?.diplomas_url,
+                        profileData.portfolio?.courses_url,
+                      ].filter(Boolean) as string[]}
+                    />
+                  ) : (
+                    <div />
+                  )
+                }
+                servicios={
+                  profileData ? (
+                    <ServicesList
+                      interests={profileData.interests}
+                      baseHref={`/profesionales/${profileData.profile.id}/servicios`}
+                    />
+                  ) : (
+                    <div />
+                  )
+                }
+                resenas={<ReviewsSection />}
+              />
+
+              {/* Galería de imágenes del trabajo (si existiera) */}
+              {images.length > 0 && (
+                <div className="rounded-2xl border border-black/10 bg-white p-6">
+                  <h3 className="mb-3 text-lg font-semibold text-foreground">Imágenes</h3>
+                  <div className="grid grid-cols-3 gap-2">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={images[0]} alt="Imagen principal" className="col-span-3 h-64 w-full rounded-xl object-cover sm:col-span-2" />
+                    {images.slice(1, 4).map((src, i) => (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img key={i} src={src} alt="Imagen" className="h-32 w-full rounded-xl object-cover" />
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Aside de condiciones del trabajo si aplicara */}
+            <aside className="h-fit rounded-2xl border border-black/10 bg-white p-6">
+              <h3 className="mb-3 text-lg font-semibold text-foreground">Información de contacto</h3>
+              <ul className="grid gap-2 text-sm text-black/80">
+                {price && (
+                  <li>
+                    <span className="font-medium">Precio:</span> {price}
+                  </li>
+                )}
+                {modality && (
+                  <li>
+                    <span className="font-medium">Modalidad:</span> {modality}
+                  </li>
+                )}
+                {nameLocation && (
+                  <li>
+                    <span className="font-medium">Ubicación:</span> {nameLocation}
+                  </li>
+                )}
+                <li>
+                  <span className="font-medium">Tiempo de respuesta:</span> 24 horas
+                </li>
+                <li>
+                  <span className="font-medium">Envío nacional:</span> Disponible
+                </li>
+              </ul>
+              <div className="mt-4 flex gap-2">
+                <button className="btn btn-primary">Contactar</button>
+                <button className="btn btn-outline">Guardar</button>
+              </div>
+            </aside>
+          </div>
+        </section>
+      </main>
     );
   }
 

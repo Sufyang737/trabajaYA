@@ -3,12 +3,13 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-type Props = { baseHref: string };
+type Tab = { href: string; label: string; key: string };
+type Props = { baseHref: string; tabs?: Tab[] };
 
-export default function TabsNav({ baseHref }: Props) {
+export default function TabsNav({ baseHref, tabs: customTabs }: Props) {
   const pathname = usePathname();
 
-  const tabs = [
+  const tabs = customTabs || [
     { href: baseHref, label: "Resumen", key: "resumen" },
     { href: `${baseHref}/servicios`, label: "Servicios", key: "servicios" },
     { href: `${baseHref}/portfolio`, label: "Portfolio", key: "portfolio" },
