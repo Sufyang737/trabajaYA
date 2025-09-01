@@ -5,7 +5,8 @@ import Link from "next/link";
 const items = [
   { href: "/historial-trabajo", label: "Historial de trabajo" },
   { href: "/cargar-trabajo", label: "Crear trabajo" },
-  { href: "/reseñas", label: "Reseñas" },
+  { href: "/resenas", label: "Reseñas" },
+  { href: "/guardados", label: "Guardados" },
 ];
 
 export default function ProfileNav() {
@@ -26,4 +27,3 @@ export default function ProfileNav() {
     </nav>
   );
 }
-

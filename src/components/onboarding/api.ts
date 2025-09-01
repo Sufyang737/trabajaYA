@@ -10,7 +10,6 @@ export const STEP_PATHS = [
   "/onboarding/interests",
   "/onboarding/availability",
   "/onboarding/portfolio",
-  "/onboarding/preferences",
   "/onboarding/confirm",
 ] as const;
 

@@ -31,7 +31,7 @@ export default function PortfolioStep() {
         <p className="mt-2 text-sm text-black/70">Enlaces opcionales a tu CV, cursos y diplomas.</p>
       </div>
       <div className="mb-8">
-        <StepIndicator steps={["Perfil", "Intereses", "Disponibilidad", "Portfolio", "Preferencias", "Confirmación"]} current={3} />
+        <StepIndicator steps={["Perfil", "Intereses", "Disponibilidad", "Portfolio", "Confirmación"]} current={3} />
       </div>
       <div className="rounded-2xl border border-black/10 bg-white p-6 shadow-sm">
         <Field label="CV URL">

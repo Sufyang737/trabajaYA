@@ -11,10 +11,12 @@ type JobsListProps = {
     city?: string;
     hood?: string;
     q?: string;
+    modalityIn?: string[];
   };
+  expandProfileForFreelance?: boolean;
 };
 
-export default async function JobsList({ limit = 12, filters }: JobsListProps) {
+export default async function JobsList({ limit = 12, filters, expandProfileForFreelance }: JobsListProps) {
   const pbUrl = process.env.POCKETBASE_URL || "";
   const token = process.env.POCKETBEASE_ADMIN_TOKEN || process.env.POCKETBASE_ADMIN_TOKEN || "";
   const pb = new PocketBase(pbUrl);
@@ -26,7 +28,15 @@ export default async function JobsList({ limit = 12, filters }: JobsListProps) {
     let filter = 'status = "active"';
     if (filters?.category) filter += ` && category = "${filters.category}"`;
     if (filters?.subcat) filter += ` && subcategory = "${filters.subcat}"`;
-    const res = await pb.collection("jobs").getList(1, limit, { filter, sort: "-created" });
+    if (filters?.modalityIn && filters.modalityIn.length) {
+      const clauses = filters.modalityIn.map((m) => `modality = "${m}"`).join(" || ");
+      filter += ` && (${clauses})`;
+    }
+    const res = await pb.collection("jobs").getList(1, limit, {
+      filter,
+      sort: "-created",
+      expand: expandProfileForFreelance ? "profile_id" : undefined,
+    });
     items = res.items;
   } catch (e) {
     // ignore and show empty state
@@ -62,10 +72,31 @@ export default async function JobsList({ limit = 12, filters }: JobsListProps) {
   const fileBase = pbUrl ? `${pbUrl}/api/files` : undefined;
 
   return (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      {items.map((job) => (
-        <JobsCard key={job.id} job={job} imageBaseUrl={fileBase} />
-      ))}
+    <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+      {items.map((job) => {
+        let freelanceProfile: { id: string; name: string; avatar?: string; location?: string } | undefined;
+        if (
+          expandProfileForFreelance &&
+          job?.category === "creators" &&
+          job?.modality === "freelance" &&
+          job?.expand?.profile_id
+        ) {
+          const p = job.expand.profile_id as any;
+          const name = [p.first_name, p.last_name].filter(Boolean).join(" ") || "Perfil";
+          const location = [p.neighborhood, p.city, p.country].filter(Boolean).join(", ");
+          const avatar = p.photo_client
+            ? p.photo_client
+            : p.avatar_url
+            ? p.avatar_url
+            : p.avatar
+            ? `${pbUrl}/api/files/profiles/${p.id}/${p.avatar}`
+            : undefined;
+          freelanceProfile = { id: p.id, name, avatar, location };
+        }
+        return (
+          <JobsCard key={job.id} job={job} imageBaseUrl={fileBase} freelanceProfile={freelanceProfile} />
+        );
+      })}
     </div>
   );
 }

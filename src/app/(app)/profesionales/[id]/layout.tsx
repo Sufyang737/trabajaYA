@@ -4,6 +4,8 @@ import TabsNav from "./_components/TabsNav";
 import { getProfileData } from "./_data";
 import { SUBCATEGORY_OPTIONS } from "@/lib/categories";
 import ProviderHero from "@/components/providers/provider-hero";
+import ShareButton from "@/components/common/share-button";
+import SaveProfileButton from "@/components/saves/save-profile-button";
 
 export const dynamic = "force-dynamic";
 
@@ -26,7 +28,13 @@ export default async function ProfessionalLayout({
 
   const name = [profile.first_name, profile.last_name].filter(Boolean).join(" ") || "Perfil";
   const location = [profile.neighborhood, profile.city, profile.country].filter(Boolean).join(", ");
-  const avatar = profile.avatar ? fileUrl("profiles", profile.id, profile.avatar) : null;
+  const avatar = profile.photo_client
+    ? profile.photo_client
+    : profile.avatar_url
+    ? profile.avatar_url
+    : profile.avatar
+    ? (profile.avatar.startsWith("http") ? profile.avatar : fileUrl("profiles", profile.id, profile.avatar))
+    : null;
   const rating = typeof profile.rating === "number" ? profile.rating.toFixed(1) : null;
 
   const mainInterest = interests[0];
@@ -43,6 +51,20 @@ export default async function ProfessionalLayout({
   };
 
   const isProvider = mainInterest?.category === "providers";
+
+  // Build WhatsApp link if phone is available
+  const P: any = profile as any;
+  const rawPhone =
+    P?.whatsapp ||
+    P?.phone ||
+    P?.whatsapp_number ||
+    P?.phone_number ||
+    P?.telefono ||
+    P?.celular ||
+    P?.mobile ||
+    P?.mobile_phone;
+  const waPhone = rawPhone ? rawPhone.replace(/[^0-9]/g, "") : "";
+  const waHref = waPhone ? `https://wa.me/${waPhone}` : null;
 
   return (
     <main className="min-h-[calc(100vh-80px)] bg-white">
@@ -76,9 +98,20 @@ export default async function ProfessionalLayout({
                 </div>
               </div>
               <div className="flex gap-2">
-                <button className="btn btn-primary">Contactar</button>
-                <button className="btn btn-outline">Guardar</button>
-                <button className="btn btn-outline">Compartir</button>
+                {waHref ? (
+                  <a
+                    href={waHref}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn btn-primary"
+                  >
+                    Contactar
+                  </a>
+                ) : (
+                  <button className="btn btn-primary">Contactar</button>
+                )}
+                <SaveProfileButton profileId={id} />
+                <ShareButton className="btn btn-outline">Compartir</ShareButton>
               </div>
             </div>
 

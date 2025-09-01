@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Swal from "sweetalert2";
 import { CATEGORY_LABEL, SUBCATEGORY_OPTIONS, type CategoryKey } from "@/lib/categories";
 import { Input } from "@/components/ui/input";
@@ -21,6 +21,7 @@ interface FormData {
   expires_at: string;
   city: string;
   neighborhood: string;
+  photo_job?: string;
 }
 
 const initialData: FormData = {
@@ -36,12 +37,54 @@ const initialData: FormData = {
   expires_at: "",
   city: "",
   neighborhood: "",
+  photo_job: undefined,
 };
 
-export default function JobForm() {
+export default function JobForm({ jobId }: { jobId?: string }) {
   const [data, setData] = useState<FormData>(initialData);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [prefilling, setPrefilling] = useState(false);
+  const [photoUploading, setPhotoUploading] = useState(false);
+  const fileInputRef = React.useRef<HTMLInputElement | null>(null);
+
+  // Prefill when editing
+  useEffect(() => {
+    if (!jobId) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        setPrefilling(true);
+        const res = await fetch(`/api/jobs/${jobId}`);
+        const json = await res.json();
+        if (!res.ok) throw new Error(json.error || "No se pudo cargar el trabajo");
+        const j = json.record as any;
+        if (cancelled) return;
+        setData({
+          title: j.title || "",
+          description: j.description || "",
+          category: (j.category as any) || "workers",
+          subcategory: j.subcategory || "",
+          price: typeof j.price === "number" ? j.price : undefined,
+          currency: j.currency || "ARS",
+          price_unit: j.price_unit || "hour",
+          modality: j.modality || "full_time",
+          status: j.status || "active",
+          expires_at: j.expires_at ? new Date(j.expires_at).toISOString().slice(0, 10) : "",
+          city: j.city || "",
+          neighborhood: j.neighborhood || "",
+          photo_job: j.photo_job || undefined,
+        });
+      } catch (e) {
+        setError(e instanceof Error ? e.message : "Error cargando el trabajo");
+      } finally {
+        setPrefilling(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [jobId]);
 
   // Enums como opciones seleccionables
   const CURRENCY_OPTIONS = [
@@ -61,6 +104,7 @@ export default function JobForm() {
     { value: "freelance", label: "Freelance" },
     { value: "per_hour", label: "Por hora" },
     { value: "temporary", label: "Temporal" },
+    { value: "permanent_job", label: "Permanente" },
   ];
 
   const STATUS_OPTIONS = [
@@ -82,17 +126,20 @@ export default function JobForm() {
       expires_at: data.expires_at ? new Date(data.expires_at).toISOString() : undefined,
     };
     try {
-      const res = await fetch("/api/jobs", {
-        method: "POST",
+      const endpoint = jobId ? `/api/jobs/${jobId}` : "/api/jobs";
+      const method = jobId ? "PATCH" : "POST";
+      const res = await fetch(endpoint, {
+        method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
       const json = await res.json();
       if (!res.ok) throw new Error(json.error || "Error");
-      const url = `${window.location.origin}/trabajo/${json.id}`;
-      setData(initialData);
+      const id = json.record?.id || json.id;
+      const url = `${window.location.origin}/trabajos/${id}`;
+      if (!jobId) setData(initialData);
       Swal.fire({
-        title: "¡Trabajo creado!",
+        title: jobId ? "¡Trabajo actualizado!" : "¡Trabajo creado!",
         html: `<a href="${url}" class="underline text-brand" target="_blank">${url}</a>`,
         icon: "success",
       });
@@ -111,6 +158,48 @@ export default function JobForm() {
         onSubmit={handleSubmit}
         className="mt-6 space-y-4 rounded-2xl border border-brand/10 bg-white p-6 shadow-sm"
       >
+        <div>
+          <Label>Imagen del trabajo (opcional)</Label>
+          <div className="mt-2 flex items-center gap-4">
+            {data.photo_job ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={data.photo_job} alt="Foto del trabajo" className="h-16 w-16 rounded-lg object-cover" />
+            ) : (
+              <div className="h-16 w-16 rounded-lg bg-brand/10" />
+            )}
+            <div>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                className="sr-only"
+                onChange={async (e) => {
+                  const file = e.target.files?.[0] || null;
+                  if (!file) return;
+                  try {
+                    setPhotoUploading(true);
+                    const fd = new FormData();
+                    fd.append("file", file);
+                    const res = await fetch("/api/upload-job-photo", { method: "POST", body: fd });
+                    const json = await res.json();
+                    if (!res.ok) throw new Error(json.error || "Error subiendo imagen");
+                    setData((prev) => ({ ...prev, photo_job: json.url }));
+                  } catch (e) {
+                    Swal.fire({ title: "Error", text: e instanceof Error ? e.message : "Error", icon: "error" });
+                  } finally {
+                    setPhotoUploading(false);
+                  }
+                }}
+              />
+              <Button type="button" variant="outline" className="mt-1" onClick={() => fileInputRef.current?.click()} disabled={photoUploading}>
+                {photoUploading ? "Subiendo..." : data.photo_job ? "Cambiar imagen" : "Subir imagen"}
+              </Button>
+            </div>
+          </div>
+        </div>
+        {prefilling && (
+          <div className="skeleton h-6 w-48" />
+        )}
         <div>
           <Label htmlFor="title">Título</Label>
           <Input

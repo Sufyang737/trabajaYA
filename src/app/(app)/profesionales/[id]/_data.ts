@@ -10,11 +10,16 @@ export type Profile = {
   neighborhood?: string;
   country?: string;
   avatar?: string;
+  avatar_url?: string;
+  photo_client?: string;
   rating?: number;
   created?: string;
   jobs_completed?: number;
   success_rate?: number;
   on_time_rate?: number;
+  // Contact details (optional)
+  phone?: string;
+  whatsapp?: string;
 };
 
 export type Interest = { category: CategoryKey; subcategory?: string };
@@ -61,4 +66,3 @@ export function subcategoryLabel(category: CategoryKey, key?: string) {
   if (!key) return undefined;
   return SUBCATEGORY_OPTIONS[category]?.find((s) => s.key === key)?.label;
 }
-

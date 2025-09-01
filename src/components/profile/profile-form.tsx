@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Field, Input, Textarea } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { fetchProfile, saveOnboardingPart } from "@/components/onboarding/api";
@@ -13,6 +13,7 @@ interface ProfilePayload {
   city: string;
   neighborhood: string;
   bio: string;
+  photo_client?: string;
 }
 
 export default function ProfileForm() {
@@ -29,6 +30,10 @@ export default function ProfileForm() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
+  const [avatarUploading, setAvatarUploading] = useState(false);
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const [avatarMessage, setAvatarMessage] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
     (async () => {
@@ -42,6 +47,7 @@ export default function ProfileForm() {
           city: record.city || "",
           neighborhood: record.neighborhood || "",
           bio: record.bio || "",
+          photo_client: record.photo_client || record.avatar_url || undefined,
         });
       } finally {
         setLoading(false);
@@ -70,6 +76,64 @@ export default function ProfileForm() {
   return (
     <form onSubmit={onSubmit} className="flex-1">
       <div className="grid gap-4">
+        <div className="rounded-2xl border border-brand/10 bg-white p-6">
+          <h3 className="mb-1 text-lg font-semibold text-foreground">Subí tu foto de avatar</h3>
+          <p className="mb-3 text-xs text-black/60">Recomendado: imagen cuadrada, JPG o PNG, hasta 2MB.</p>
+          <div className="flex items-center gap-4">
+            {form.photo_client ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={form.photo_client} alt="Avatar" className="h-16 w-16 rounded-full object-cover" />
+            ) : (
+              <div className="h-16 w-16 rounded-full bg-brand/10" />
+            )}
+            <div className="flex-1">
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={async (e) => {
+                  const file = e.target.files?.[0] || null;
+                  setAvatarFile(file);
+                  // si no sube, al menos mostramos el nombre
+                  // (igual el upload es automático abajo)
+                  // @ts-ignore
+                  const name = file?.name as string | undefined;
+                  if (name) {
+                    // placeholder visible
+                  }
+                  setAvatarMessage(null);
+                  if (!file) return;
+                  try {
+                    setAvatarUploading(true);
+                    const fd = new FormData();
+                    fd.append("file", file);
+                    const res = await fetch("/api/upload-avatar", { method: "POST", body: fd });
+                    const json = await res.json();
+                    if (!res.ok) throw new Error(json.error || "Error subiendo avatar");
+                    setForm((prev) => ({ ...prev, photo_client: json.url }));
+                    setSaved(true);
+                    setAvatarMessage("Foto actualizada");
+                  } catch (e: unknown) {
+                    setError(e instanceof Error ? e.message : "Error subiendo avatar");
+                  } finally {
+                    setAvatarUploading(false);
+                  }
+                }}
+                className="block text-sm"
+              />
+              <div className="mt-2">
+                <button
+                  type="button"
+                  className="btn btn-outline text-sm"
+                  onClick={() => fileInputRef.current?.click()}
+                >
+                  {avatarUploading ? "Subiendo..." : "Subir foto"}
+                </button>
+                <span className="ml-3 text-xs text-black/60">{avatarMessage ? avatarMessage : "Sin archivos seleccionados"}</span>
+              </div>
+            </div>
+          </div>
+        </div>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <Field label="Nombre">
             <Input
@@ -86,6 +150,7 @@ export default function ProfileForm() {
         </div>
         <Field label="Teléfono">
           <Input
+            placeholder="Ej: +54 9 11 1234 5678"
             value={form.phone_number}
             onChange={(e) => setForm({ ...form, phone_number: e.target.value })}
           />
@@ -93,18 +158,21 @@ export default function ProfileForm() {
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
           <Field label="País">
             <Input
+              placeholder="Ej: Argentina"
               value={form.country}
               onChange={(e) => setForm({ ...form, country: e.target.value })}
             />
           </Field>
           <Field label="Ciudad">
             <Input
+              placeholder="Ej: Buenos Aires"
               value={form.city}
               onChange={(e) => setForm({ ...form, city: e.target.value })}
             />
           </Field>
           <Field label="Barrio">
             <Input
+              placeholder="Ej: Palermo"
               value={form.neighborhood}
               onChange={(e) => setForm({ ...form, neighborhood: e.target.value })}
             />
@@ -112,6 +180,7 @@ export default function ProfileForm() {
         </div>
         <Field label="Bio">
           <Textarea
+            placeholder="Contanos en pocas líneas tu experiencia y qué ofrecés."
             value={form.bio}
             onChange={(e) => setForm({ ...form, bio: e.target.value })}
           />
@@ -127,4 +196,3 @@ export default function ProfileForm() {
     </form>
   );
 }
-

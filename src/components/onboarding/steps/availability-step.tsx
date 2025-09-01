@@ -63,10 +63,10 @@ export default function AvailabilityStep() {
         <p className="mt-2 text-sm text-black/70">Indicá cuándo podés trabajar y tu modalidad.</p>
       </div>
       <div className="mb-4">
-        <OnboardingProgress current={2} total={6} />
+        <OnboardingProgress current={2} total={5} />
       </div>
       <div className="mb-8 animate-slide-up">
-        <StepIndicator steps={["Perfil", "Intereses", "Disponibilidad", "Portfolio", "Preferencias", "Confirmación"]} current={2} />
+        <StepIndicator steps={["Perfil", "Intereses", "Disponibilidad", "Portfolio", "Confirmación"]} current={2} />
       </div>
       <div className="rounded-2xl border border-black/10 bg-white p-6 shadow-sm animate-slide-up">
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">

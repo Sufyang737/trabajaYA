@@ -1,5 +1,7 @@
 import { fileUrl } from "@/services/pb";
 import { CheckCircle2, Phone, Bookmark, Share2 } from "lucide-react";
+import ShareButton from "@/components/common/share-button";
+import SaveProfileButton from "@/components/saves/save-profile-button";
 
 export default function ProviderHero({
   profile,
@@ -10,20 +12,43 @@ export default function ProviderHero({
     first_name?: string;
     last_name?: string;
     avatar?: string;
+    photo_client?: string;
+    avatar_url?: string;
     city?: string;
     country?: string;
     neighborhood?: string;
     rating?: number;
     created?: string;
+    phone?: string;
+    whatsapp?: string;
   };
   subcategoryLabel?: string;
 }) {
   const name = [profile.first_name, profile.last_name].filter(Boolean).join(" ") || "Proveedor";
-  const avatar = profile.avatar ? fileUrl("profiles", profile.id, profile.avatar) : null;
+  const avatar = profile.photo_client
+    ? profile.photo_client
+    : profile.avatar_url
+    ? profile.avatar_url
+    : profile.avatar
+    ? (profile.avatar.startsWith("http") ? profile.avatar : fileUrl("profiles", profile.id, profile.avatar))
+    : null;
   const location = [profile.neighborhood, profile.city, profile.country].filter(Boolean).join(", ");
   const rating = typeof profile.rating === "number" ? profile.rating.toFixed(1) : "4.8";
   const reviews = 124; // Placeholder hasta conectar reseñas reales
   const years = profile.created ? Math.max(1, new Date().getFullYear() - new Date(profile.created).getFullYear()) : 1;
+
+  const P: any = profile as any;
+  const rawPhone =
+    P?.whatsapp ||
+    P?.phone ||
+    P?.whatsapp_number ||
+    P?.phone_number ||
+    P?.telefono ||
+    P?.celular ||
+    P?.mobile ||
+    P?.mobile_phone;
+  const waPhone = rawPhone ? rawPhone.replace(/[^0-9]/g, "") : "";
+  const waHref = waPhone ? `https://wa.me/${waPhone}` : null;
 
   return (
     <div className="rounded-2xl border border-brand/10 bg-white p-6 shadow-sm">
@@ -52,15 +77,24 @@ export default function ProviderHero({
           </div>
         </div>
         <div className="flex gap-2 self-start">
-          <button className="btn btn-primary inline-flex items-center gap-1">
-            <Phone className="h-4 w-4" /> Contactar
-          </button>
-          <button className="btn btn-outline inline-flex items-center gap-1">
-            <Bookmark className="h-4 w-4" /> Guardar
-          </button>
-          <button className="btn btn-outline inline-flex items-center gap-1">
+          {waHref ? (
+            <a
+              href={waHref}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn btn-primary inline-flex items-center gap-1"
+            >
+              <Phone className="h-4 w-4" /> Contactar
+            </a>
+          ) : (
+            <button className="btn btn-primary inline-flex items-center gap-1">
+              <Phone className="h-4 w-4" /> Contactar
+            </button>
+          )}
+          <SaveProfileButton profileId={profile.id} className="btn btn-outline inline-flex items-center gap-1" />
+          <ShareButton className="btn btn-outline inline-flex items-center gap-1">
             <Share2 className="h-4 w-4" /> Compartir
-          </button>
+          </ShareButton>
         </div>
       </div>
 
@@ -86,4 +120,3 @@ export default function ProviderHero({
     </div>
   );
 }
-

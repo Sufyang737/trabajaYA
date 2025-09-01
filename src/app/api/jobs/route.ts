@@ -15,6 +15,7 @@ interface JobInput {
   expires_at?: string;
   city?: string;
   neighborhood?: string;
+  photo_job?: string;
 }
 
 export async function POST(req: NextRequest) {
@@ -37,6 +38,33 @@ export async function POST(req: NextRequest) {
       profile_id: profile.id,
     });
     return NextResponse.json({ record });
+  } catch (e: unknown) {
+    const error = e as { status?: number; message?: string };
+    const status = typeof error?.status === "number" ? error.status : 500;
+    return NextResponse.json({ error: error?.message || "PocketBase error" }, { status });
+  } finally {
+    pb.authStore.clear();
+  }
+}
+
+export async function GET(req: NextRequest) {
+  const { userId } = await auth();
+  if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  const pb = getPocketBase();
+
+  try {
+    const profile = await pb.collection("profiles").getFirstListItem(`clerk_id = "${userId}"`);
+    const { searchParams } = new URL(req.url);
+    const page = Number(searchParams.get("page") || 1);
+    const perPage = Number(searchParams.get("perPage") || 20);
+    const sort = searchParams.get("sort") || "-created";
+
+    const list = await pb.collection("jobs").getList(page, perPage, {
+      filter: `profile_id = "${profile.id}"`,
+      sort,
+    });
+    return NextResponse.json(list);
   } catch (e: unknown) {
     const error = e as { status?: number; message?: string };
     const status = typeof error?.status === "number" ? error.status : 500;
