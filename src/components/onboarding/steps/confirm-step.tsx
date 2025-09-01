@@ -33,10 +33,10 @@ export default function ConfirmStep() {
         <p className="mt-2 text-sm text-black/70">Revisá y finalizá el proceso.</p>
       </div>
       <div className="mb-4">
-        <OnboardingProgress current={5} total={6} />
+        <OnboardingProgress current={4} total={5} />
       </div>
       <div className="mb-8 animate-slide-up">
-        <StepIndicator steps={["Perfil", "Intereses", "Disponibilidad", "Portfolio", "Preferencias", "Confirmación"]} current={5} />
+        <StepIndicator steps={["Perfil", "Intereses", "Disponibilidad", "Portfolio", "Confirmación"]} current={4} />
       </div>
       <div className="rounded-2xl border border-black/10 bg-white p-6 shadow-sm animate-slide-up">
         <p className="text-sm text-black/70">Si necesitás, podés volver atrás y ajustar algún paso antes de finalizar.</p>

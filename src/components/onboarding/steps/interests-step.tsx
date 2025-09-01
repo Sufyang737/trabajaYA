@@ -50,10 +50,10 @@ export default function InterestsStep() {
         <p className="mt-2 text-sm text-black/70">Agregá tus categorías de interés.</p>
       </div>
       <div className="mb-4">
-        <OnboardingProgress current={1} total={6} />
+        <OnboardingProgress current={1} total={5} />
       </div>
       <div className="mb-8 animate-slide-up">
-        <StepIndicator steps={["Perfil", "Intereses", "Disponibilidad", "Portfolio", "Preferencias", "Confirmación"]} current={1} />
+        <StepIndicator steps={["Perfil", "Intereses", "Disponibilidad", "Portfolio", "Confirmación"]} current={1} />
       </div>
       <div className="rounded-2xl border border-black/10 bg-white p-6 shadow-sm animate-slide-up">
         {/* Category intro */}
@@ -156,13 +156,19 @@ export default function InterestsStep() {
 
         {/* Selected items */}
         <div className="mt-5 flex flex-wrap gap-2">
-          {items.map((it, i) => (
-            <span key={i} className="inline-flex items-center gap-2 rounded-full border border-black/10 bg-white px-3 py-1 text-sm">
-              <span className="rounded-full bg-brand px-2 py-0.5 text-xs text-brand-foreground">{it.category}</span>
-              <span className="text-black/80">{it.subcategory}</span>
-              <button className="text-black/60" onClick={() => remove(i)} aria-label="Quitar">×</button>
-            </span>
-          ))}
+          {items.map((it, i) => {
+            const catLabel = CATEGORY_OPTIONS.find((c) => c.key === it.category)?.label || it.category;
+            const subLabel = (SUBCATEGORY_OPTIONS as any)[it.category]?.find((s: any) => s.key === it.subcategory)?.label || it.subcategory;
+            return (
+              <span key={i} className="inline-flex items-center gap-2 rounded-full border border-black/10 bg-white px-3 py-1 text-sm">
+                <span className="rounded-full bg-black/5 px-2 py-0.5 text-[11px] text-black/80">{catLabel}</span>
+                <span className="text-black/80">{subLabel}</span>
+                {it.is_job_seeker && <span className="rounded-full bg-brand/10 px-2 py-0.5 text-[11px] text-brand">Busco</span>}
+                {it.is_job_offerer && <span className="rounded-full bg-brand/10 px-2 py-0.5 text-[11px] text-brand">Ofrezco</span>}
+                <button className="text-black/60" onClick={() => remove(i)} aria-label="Quitar">×</button>
+              </span>
+            );
+          })}
         </div>
         {error && <p className="mt-4 text-sm text-red-600">{error}</p>}
         <div className="mt-6 flex justify-end">

@@ -8,6 +8,8 @@ import PortfolioSection from "@/components/professionals/portfolio-section";
 import ReviewsSection from "@/components/professionals/reviews-section";
 import JobProfileTabs from "@/components/jobs/job-profile-tabs";
 import ProviderHero from "@/components/providers/provider-hero";
+import ShareButton from "@/components/common/share-button";
+import SaveJobButton from "@/components/saves/save-job-button";
 
 export const dynamic = "force-dynamic";
 
@@ -21,11 +23,12 @@ type JobRecord = {
   price?: number;
   currency?: "ARS" | "USD" | string;
   price_unit?: "hour" | "project" | "monthly" | string;
-  modality?: "full_time" | "part_time" | "freelance" | "per_hour" | "temporary" | string;
+  modality?: "full_time" | "part_time" | "freelance" | "per_hour" | "temporary" | "permanent_job" | string;
   status?: string;
   city?: string;
   neighborhood?: string;
   images?: string[];
+  photo_job?: string;
   created?: string;
 };
 
@@ -76,6 +79,7 @@ const MODALITY_LABEL: Record<string, string> = {
   freelance: "Freelance",
   per_hour: "Por hora",
   temporary: "Temporal",
+  permanent_job: "Permanente",
 };
 
 function formatPrice(price?: number, currency?: string, unit?: string) {
@@ -122,6 +126,18 @@ type CreatorProps = {
 function CreatorServiceView({ job, cat, sub, price, modality, location, created, images, profileData }: CreatorProps) {
   const profile = profileData?.profile;
   const portfolio = profileData?.portfolio;
+  const P1: any = profile as any;
+  const rawPhone =
+    P1?.whatsapp ||
+    P1?.phone ||
+    P1?.whatsapp_number ||
+    P1?.phone_number ||
+    P1?.telefono ||
+    P1?.celular ||
+    P1?.mobile ||
+    P1?.mobile_phone;
+  const waPhone = rawPhone ? rawPhone.replace(/[^0-9]/g, "") : "";
+  const waHref = waPhone ? `https://wa.me/${waPhone}` : null;
   return (
     <main className="min-h-[calc(100vh-80px)] bg-white">
       <section className="mx-auto max-w-5xl px-6 py-8">
@@ -147,9 +163,17 @@ function CreatorServiceView({ job, cat, sub, price, modality, location, created,
                 <p className="mt-3 max-w-2xl text-sm text-black/80">{job.description}</p>
               )}
             </div>
-            <div className="flex gap-2 self-start">
-              <button className="btn btn-primary">Contactar</button>
-              <button className="btn btn-outline">Compartir perfil</button>
+            <div className="flex items-center gap-2 self-start">
+              {price && <span className="rounded-full bg-brand px-3 py-1 text-xs font-medium text-white">{price}</span>}
+              {waHref ? (
+                <a href={waHref} target="_blank" rel="noopener noreferrer" className="btn btn-primary">
+                  Contactar
+                </a>
+              ) : (
+                <button className="btn btn-primary">Contactar</button>
+              )}
+              <SaveJobButton jobId={job.id} />
+              <ShareButton className="btn btn-outline">Compartir perfil</ShareButton>
             </div>
           </div>
         </div>
@@ -203,7 +227,7 @@ function CreatorServiceView({ job, cat, sub, price, modality, location, created,
                     <ProfileSummary
                       profile={profile}
                       portfolio={portfolio}
-                      availability={availability}
+                      availability={profileData.availability}
                     />
                   )}
                 </div>
@@ -318,12 +342,62 @@ export default async function JobDetailPage({ params }: { params: Promise<{ id: 
   if (job.category === "providers") {
     const profileData = job.profile_id ? await getProfileData(job.profile_id) : null;
     const nameLocation = location;
+    const P2: any = profileData?.profile as any;
+    const rawPhone =
+      P2?.whatsapp ||
+      P2?.phone ||
+      P2?.whatsapp_number ||
+      P2?.phone_number ||
+      P2?.telefono ||
+      P2?.celular ||
+      P2?.mobile ||
+      P2?.mobile_phone;
+    const waPhone = rawPhone ? rawPhone.replace(/[^0-9]/g, "") : "";
+    const waHref = waPhone ? `https://wa.me/${waPhone}` : null;
+    const hero = job.photo_job || images[0];
     return (
       <main className="min-h-[calc(100vh-80px)] bg-white">
         <section className="mx-auto max-w-5xl px-6 py-8">
           <div className="mb-4 text-sm">
             <Link href="/buscar-freelancer" className="text-black/60 hover:text-black">← Volver</Link>
           </div>
+
+          {/* Encabezado del trabajo */}
+          <div className="rounded-2xl border border-black/10 bg-white p-6 shadow-sm">
+            <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+              <div>
+                <h1 className="text-2xl font-semibold text-foreground">{job.title || sub || "Trabajo"}</h1>
+                <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-black/70">
+                  {cat && <span className="badge">{cat}</span>}
+                  {sub && <span className="badge">{sub}</span>}
+                  {modality && <span className="badge">{modality}</span>}
+                  {nameLocation && <span className="badge">{nameLocation}</span>}
+                  {created && <span className="badge">Publicado {created}</span>}
+                </div>
+                {job.description && (
+                  <p className="mt-3 max-w-2xl text-sm text-black/80">{job.description}</p>
+                )}
+              </div>
+              <div className="flex items-center gap-2 self-start">
+                {price && <span className="rounded-full bg-brand px-3 py-1 text-xs font-medium text-white">{price}</span>}
+                <SaveJobButton jobId={job.id} />
+                <ShareButton className="btn btn-outline">Compartir</ShareButton>
+                {waHref ? (
+                  <a href={waHref} target="_blank" rel="noopener noreferrer" className="btn btn-primary">Contactar</a>
+                ) : (
+                  <button className="btn btn-primary">Contactar</button>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Imagen destacada (si hay) */}
+          {hero && (
+            <div className="mt-4 overflow-hidden rounded-2xl border border-black/10">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={hero} alt="Imagen del trabajo" className="h-72 w-full object-cover" />
+            </div>
+          )}
 
           {/* Hero de proveedor */}
           {profileData && (
@@ -413,8 +487,14 @@ export default async function JobDetailPage({ params }: { params: Promise<{ id: 
                 </li>
               </ul>
               <div className="mt-4 flex gap-2">
-                <button className="btn btn-primary">Contactar</button>
-                <button className="btn btn-outline">Guardar</button>
+                {waHref ? (
+                  <a href={waHref} target="_blank" rel="noopener noreferrer" className="btn btn-primary">
+                    Contactar
+                  </a>
+                ) : (
+                  <button className="btn btn-primary">Contactar</button>
+                )}
+                <SaveJobButton jobId={job.id} />
               </div>
             </aside>
 

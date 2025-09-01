@@ -1,9 +1,21 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
+import { auth } from "@clerk/nextjs/server";
+import { SignedIn } from "@clerk/nextjs";
+import ClientRedirect from "@/components/auth/client-redirect";
 export const dynamic = "force-dynamic";
 
-export default function Home() {
+export default async function Home() {
+  const { userId } = auth();
+  if (userId) {
+    redirect("/buscar");
+  }
   return (
     <main className="min-h-[calc(100vh-80px)] bg-white">
+      {/* Client-side fallback redirect in case server auth isn't available */}
+      <SignedIn>
+        <ClientRedirect to="/buscar" />
+      </SignedIn>
 
       <section className="mx-auto flex max-w-3xl flex-col items-center justify-center gap-8 px-6 py-24 text-center">
         <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl">

@@ -32,27 +32,18 @@ const defaultLogo = {
 };
 
 const defaultMenu: MenuItem[] = [
-  { title: "Inicio", url: "/" },
+  { title: "Buscar", url: "/buscar" },
   {
     title: "Oficios",
     url: "/oficios",
-    items: [
-      { title: "Electricistas", description: "Profesionales verificados", icon: <Zap className="size-5" />, url: "/oficios" },
-      { title: "Plomeros", description: "Urgencias y mantenimiento", icon: <Sunset className="size-5" />, url: "/oficios" },
-      { title: "Carpinteros", description: "A medida y reparación", icon: <Trees className="size-5" />, url: "/oficios" },
-    ],
+    // Submenú deshabilitado a pedido: no mostrar opciones al pasar el mouse
   },
   {
     title: "Creadores",
     url: "/creadores",
-    items: [
-      { title: "Diseño", description: "Branding y UI/UX", icon: <Book className="size-5" />, url: "/creadores" },
-      { title: "Contenido", description: "Foto, video y social", icon: <Zap className="size-5" />, url: "/creadores" },
-    ],
+    // Submenú deshabilitado a pedido: no mostrar opciones al pasar el mouse
   },
   { title: "Proveedores", url: "/proveedores" },
-  { title: "Asistente Laboral", url: "/asistente" },
-  { title: "Planes", url: "/planes" },
 ];
 
 export function Navbar1({ logo = defaultLogo, menu = defaultMenu }: Navbar1Props) {
@@ -60,16 +51,16 @@ export function Navbar1({ logo = defaultLogo, menu = defaultMenu }: Navbar1Props
   return (
     <header className="w-full border-b border-black/10 bg-white">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid h-16 grid-cols-[auto_1fr_auto] items-center">
+        <div className="grid h-20 grid-cols-[1fr_auto_1fr] items-center">
           {/* Left: Logo */}
           <div className="justify-self-start">
             <Link href={logo.url} className="flex items-center gap-2" aria-label={logo.title}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={logo.src}
-                width={240}
-                height={72}
-                className="h-16 w-auto"
+                width={300}
+                height={100}
+                className="h-20 w-auto"
                 alt={logo.alt}
               />
             </Link>
@@ -103,6 +94,9 @@ export function Navbar1({ logo = defaultLogo, menu = defaultMenu }: Navbar1Props
 
           {/* Right: Auth + Mobile menu */}
           <div className="justify-self-end flex items-center gap-2">
+            <Link href="/perfil">
+              <Button variant="outline" size="sm">Perfil</Button>
+            </Link>
             <Link href="/cargar-trabajo">
               <Button size="sm">Cargar trabajo</Button>
             </Link>
@@ -131,7 +125,7 @@ export function Navbar1({ logo = defaultLogo, menu = defaultMenu }: Navbar1Props
             <div className="mb-4 flex items-center justify-between">
               <Link href={logo.url} className="flex items-center gap-2" onClick={() => setOpen(false)}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={logo.src} className="h-12 w-auto" alt={logo.alt} />
+                <img src={logo.src} className="h-16 w-auto" alt={logo.alt} />
               </Link>
               <Button variant="outline" size="icon" onClick={() => setOpen(false)} aria-label="Cerrar">×</Button>
             </div>

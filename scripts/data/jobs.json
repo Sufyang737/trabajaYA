@@ -1,0 +1,72 @@
+[
+  {
+    "profile_id":"qbl7wc4kygotpyq",
+    "title":"Instalación eléctrica domiciliaria",
+    "description":"Puesta a punto de tablero y cableado seguro según norma.",
+    "category":"workers","subcategory":"electrician",
+    "price":25000,"currency":"ARS","price_unit":"project",
+    "modality":"freelance","status":"active",
+    "expires_at":"2025-10-01 12:00:00Z",
+    "city":"Buenos Aires","neighborhood":"Caballito"
+  },
+  {
+    "profile_id":"qbl7wc4kygotpyq",
+    "title":"Reparación de cañerías y grifería",
+    "description":"Detección de fugas, cambio de grifos y sellado.",
+    "category":"workers","subcategory":"plumber",
+    "price":12000,"currency":"ARS","price_unit":"hour",
+    "modality":"per_hour","status":"active",
+    "expires_at":"2025-09-30 12:00:00Z",
+    "city":"Buenos Aires","neighborhood":"Palermo"
+  },
+  {
+    "profile_id":"qbl7wc4kygotpyq",
+    "title":"Muebles a medida en MDF",
+    "description":"Diseño, corte y armado de muebles personalizados.",
+    "category":"workers","subcategory":"carpenter",
+    "price":300,"currency":"USD","price_unit":"project",
+    "modality":"freelance","status":"active",
+    "expires_at":"2025-11-15 12:00:00Z",
+    "city":"Lanús","neighborhood":"Remedios de Escalada"
+  },
+  {
+    "profile_id":"qbl7wc4kygotpyq",
+    "title":"Pintura interior departamento 2 amb.",
+    "description":"Empaste, lijado y pintura al látex premium.",
+    "category":"workers","subcategory":"painter",
+    "price":80000,"currency":"ARS","price_unit":"project",
+    "modality":"temporary","status":"active",
+    "expires_at":"2025-09-20 12:00:00Z",
+    "city":"Vicente López","neighborhood":"Florida"
+  },
+  {
+    "profile_id":"qbl7wc4kygotpyq",
+    "title":"Branding express para emprendedores",
+    "description":"Logo simple, paleta, tipografías y mini brandbook PDF.",
+    "category":"creators","subcategory":"designer",
+    "price":150,"currency":"USD","price_unit":"project",
+    "modality":"freelance","status":"active",
+    "expires_at":"2025-12-01 12:00:00Z",
+    "city":"Córdoba","neighborhood":"Nueva Córdoba"
+  },
+  {
+    "profile_id":"qbl7wc4kygotpyq",
+    "title":"Sesión de fotos producto e-commerce",
+    "description":"Pack 20 fotos con iluminación y fondo neutro.",
+    "category":"creators","subcategory":"photographer",
+    "price":60000,"currency":"ARS","price_unit":"project",
+    "modality":"freelance","status":"active",
+    "expires_at":"2025-10-10 12:00:00Z",
+    "city":"Rosario","neighborhood":"Centro"
+  },
+  {
+    "profile_id":"qbl7wc4kygotpyq",
+    "title":"Instalación de aire acondicionado",
+    "description":"Colocación, vacío, carga y prueba de rendimiento.",
+    "category":"providers","subcategory":"appliances",
+    "price":35000,"currency":"ARS","price_unit":"project",
+    "modality":"freelance","status":"active",
+    "expires_at":"2025-09-25 12:00:00Z",
+    "city":"La Plata","neighborhood":"Tolosa"
+  }
+]

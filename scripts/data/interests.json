@@ -1,0 +1,10 @@
+[
+  {"category":"workers","subcategory":"electrician","is_job_seeker":true,"is_job_offerer":false,"profile_id":"qbl7wc4kygotpyq"},
+  {"category":"workers","subcategory":"plumber","is_job_seeker":true,"is_job_offerer":false,"profile_id":"qbl7wc4kygotpyq"},
+  {"category":"workers","subcategory":"carpenter","is_job_seeker":true,"is_job_offerer":false,"profile_id":"qbl7wc4kygotpyq"},
+  {"category":"creators","subcategory":"designer","is_job_seeker":false,"is_job_offerer":true,"profile_id":"qbl7wc4kygotpyq"},
+  {"category":"creators","subcategory":"photographer","is_job_seeker":false,"is_job_offerer":true,"profile_id":"qbl7wc4kygotpyq"},
+  {"category":"providers","subcategory":"construction","is_job_seeker":false,"is_job_offerer":true,"profile_id":"qbl7wc4kygotpyq"},
+  {"category":"providers","subcategory":"electronics","is_job_seeker":false,"is_job_offerer":true,"profile_id":"qbl7wc4kygotpyq"}
+]
+

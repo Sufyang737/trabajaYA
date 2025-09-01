@@ -11,6 +11,7 @@ type ProfilePatch = Partial<{
   phone_number: string;
   bio: string;
   roles: string[];
+  photo_client: string;
 }>;
 
 type PortfolioInput = Partial<{
@@ -90,6 +91,7 @@ export async function POST(req: NextRequest) {
       phone_number: body.profile?.phone_number ?? body.phone_number,
       bio: body.profile?.bio ?? body.bio,
       roles: body.profile?.roles ?? body.roles,
+      photo_client: body.profile?.photo_client,
     };
 
     for (const [k, v] of Object.entries(src)) {

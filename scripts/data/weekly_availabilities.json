@@ -1,0 +1,10 @@
+[
+  {"profile_id":"qbl7wc4kygotpyq","day_of_week":"monday","start_time":"09:00","end_time":"17:00","is_active":true,"work_mode":"both","notes":"Consultas y presupuestos."},
+  {"profile_id":"qbl7wc4kygotpyq","day_of_week":"tuesday","start_time":"09:00","end_time":"17:00","is_active":true,"work_mode":"on_site","notes":"Visitas técnicas."},
+  {"profile_id":"qbl7wc4kygotpyq","day_of_week":"wednesday","start_time":"10:00","end_time":"18:00","is_active":true,"work_mode":"remote","notes":"Diseño/edición."},
+  {"profile_id":"qbl7wc4kygotpyq","day_of_week":"thursday","start_time":"09:30","end_time":"17:30","is_active":true,"work_mode":"both","notes":"Reuniones y pruebas."},
+  {"profile_id":"qbl7wc4kygotpyq","day_of_week":"friday","start_time":"09:00","end_time":"16:00","is_active":true,"work_mode":"both","notes":"Entregas y cierres."},
+  {"profile_id":"qbl7wc4kygotpyq","day_of_week":"saturday","start_time":"10:00","end_time":"14:00","is_active":true,"work_mode":"on_site","notes":"Urgencias."},
+  {"profile_id":"qbl7wc4kygotpyq","day_of_week":"sunday","start_time":"00:00","end_time":"00:00","is_active":false,"work_mode":"both","notes":"Descanso."}
+]
+
